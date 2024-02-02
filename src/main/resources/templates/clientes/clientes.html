@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+	    <meta charset="UTF-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    
+	    <title>Clientes</title>
+	
+	    <!-- Bootstrap CSS -->
+	    <link rel="stylesheet" href="../../static/recursosApp/bootstrap.min.css">
+	    <!-- DataTables CSS -->
+	    <link rel="stylesheet" href="../../static/recursosApp/jquery.dataTables.min.css">
+	    <!-- jQuery UI CSS -->
+		<link rel="stylesheet" href="../../static/recursosApp/jquery-ui.css">
+	    <!-- Bootstrap Icons CSS -->
+	    <link rel="stylesheet" href="../../static/recursosApp/icons-main/font/bootstrap-icons.min.css">
+	    <!-- Toastr CSS -->
+	    <link rel="stylesheet" href="../../static/recursosApp/toastr.min.css">
+	    
+	</head>
+	
+	<body style="background: #e8e2d9; height: 300px;">
+		
+		<header>
+			<!-- Aquí se carga el header mediante un archivo javascript -->
+		</header>
+		
+		<div class="container">
+			<div class="container my-4">
+			    <h1 class="text-center font-weight-bold">Gestión de Clientes</h1>
+			</div>
+			<hr>
+			
+			<div class="container my-4">
+				<button type="button" id="crearNuevoCliente" class="btn btn-primary btn-lg">Nuevo Cliente</button>
+			</div>
+			
+			<div class="container my-4">
+			    <div class="row">
+			        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+			            <table id="tablaClientes" class="table table-striped">
+			                <thead  id="theadClientes">
+			                    <tr>
+			                        <th>DNI</th>
+			                        <th>Nombre</th>
+			                        <th>1º Apellido</th>
+			                        <th>2º Apellido</th>
+			                        <th>Fecha Nacimiento</th>
+			                        <th>Grupo Edad</th>
+			                        <th>De Alta</th>
+			                        <th>Teléfono</th>
+			                        <th>Correo Electrónico</th>
+			                        <th>Acciones</th>
+			                    </tr>
+			                </thead>
+			                <tbody id="tbodyClientes">
+			                    <!-- Aquí se agregarán las filas con datos -->
+			                </tbody>
+			            </table>
+			            
+			        </div>
+			    </div>
+			</div>
+		</div>
+		
+	    
+<!-- Modales -->
+		<!-- Modal Crear -->
+		<div class="modal fade" data-backdrop="static" id="modalCrearCliente" tabindex="-1" role="dialog" aria-hidden="true">
+		    <div class="modal-dialog" role="document" style="max-width: 1100px;">
+		        <div class="modal-content">
+		            <!-- modal-header -->
+		            <div class="modal-header">
+		                <h5 class="modal-title">Crear nuevo cliente</h5>
+		            </div>
+		            <!-- modal-body -->
+		            <div class="modal-body">
+		                
+		                <form class="needs-validation" novalidate>
+		                    <div class="form-row">
+		                        
+		                        <div class="col-md-4 mb-3">
+		                            <label for="nombre">Nombre *</label>
+		                            <input type="text" class="form-control" id="nombreCrear" placeholder="Nombre"  required>
+		                            <div class="valid-tooltip">
+		                                Correcto!
+		                            </div>
+		                        </div>
+		                
+		                        <div class="col-md-4 mb-3">
+		                            <label for="apellido1">1º Apellido *</label>
+		                            <input type="text" class="form-control" id="apellido1Crear" placeholder="1º Apellido" required>
+		                            <div class="valid-tooltip">
+		                                Correcto!
+		                            </div>
+		                        </div>
+		                
+		                        <div class="col-md-4 mb-3">
+		                            <label for="apellido2">2º Apellido</label>
+		                            <input type="text" class="form-control" id="apellido2Crear" placeholder="2º Apellido">
+		                            <div class="valid-tooltip">
+		                                Correcto!
+		                            </div>
+		                        </div>
+		                    </div>
+		                
+		                    <div class="form-row">
+		                        <div class="col-md-4 mb-3">
+		                            <label for="nombre">DNI *</label>
+		                            <input type="text" class="form-control" id="dniCrear" placeholder="55443322R"  required>
+		                            <div class="valid-tooltip">
+		                                Correcto!
+		                            </div>
+		                        </div>
+		
+		                        <div class="col-md-4 mb-3">
+		                            <label for="telefono">Teléfono</label>
+		                            <input type="text" class="form-control" id="telefonoCrear" placeholder="Ingrese número de teléfono">
+		                            <div class="valid-tooltip">
+		                                Correcto!
+		                            </div>
+		                        </div>
+		                
+		                        <div class="col-md-4 mb-3">
+		                            <label for="email">Email *</label>
+		                            <input type="email" class="form-control" id="emailCrear" placeholder="ejemplo@mail.com"  required>
+		                            <div class="valid-tooltip">
+		                            	Correcto!
+		                            </div>
+		                        </div>
+		                    </div>
+		
+		                    <div class="form-row">
+		                        <div class="col-md-4 mb-3">
+		                            <label for="grupoEdad">Grupo de edad *</label>
+		                            <select class="form-control-sm" id="grupoEdadCrear" required>
+		                                <!-- Aquí puedes agregar opciones según tus necesidades -->
+		                                <option selected>Selecciona ...</option>
+		                                <option value="joven">Niño</option>
+		                                <option value="adulto">Adulto</option>
+		                                <option value="jubilado">Jubilado</option>
+		                            </select>
+		                            <div class="valid-tooltip">
+		                                Correcto!
+		                            </div>
+		                        </div>
+		
+		                        <div class="col-md-4 mb-3">
+		                            <label for="telefono">Fecha de Nacimiento *</label>
+		                            <input type="text" class="form-control-sm" id="fechaNacimientoCrear" required>
+		                            <div class="valid-tooltip">
+		                                Correcto!
+		                            </div>
+		                        </div>
+		                    </div>
+		                        
+		                    <div class="form-row">
+		                        <p>Los campos con (*) son obligatorios.</p>
+		                    </div>
+		
+		                </form>
+		            </div>
+		            <div class="modal-footer">
+		                <button type="button" id="btnCerrar" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+		                <button type="button" id="btnCrear" class="btn btn-primary">Crear</button>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+		
+		<!-- Modal Update -->
+		<div class="modal fade" data-backdrop="static" id="modalEditarCliente" tabindex="-1" role="dialog" aria-hidden="true">
+		    <div class="modal-dialog" role="document" style="max-width: 1100px;">
+		        <div class="modal-content">
+		            <!-- modal-header -->
+		            <div class="modal-header">
+		                <h5 class="modal-title">Editar cliente</h5>
+		            </div>
+		            <!-- modal-body -->
+		            <div class="modal-body">
+		                
+		                <form class="needs-validation" novalidate>
+		                    <div class="form-row">
+		                        
+		                        <div class="col-md-4 mb-3">
+		                            <label for="nombre">Nombre *</label>
+		                            <input type="text" class="form-control" id="nombreEditar" placeholder="Nombre"  required>
+		                            <div class="valid-tooltip">
+		                                Correcto!
+		                            </div>
+		                        </div>
+		                
+		                        <div class="col-md-4 mb-3">
+		                            <label for="apellido1">1º Apellido *</label>
+		                            <input type="text" class="form-control" id="apellido1Editar" placeholder="1º Apellido" required>
+		                            <div class="valid-tooltip">
+		                                Correcto!
+		                            </div>
+		                        </div>
+		                
+		                        <div class="col-md-4 mb-3">
+		                            <label for="apellido2">2º Apellido</label>
+		                            <input type="text" class="form-control" id="apellido2Editar" placeholder="2º Apellido">
+		                            <div class="valid-tooltip">
+		                                Correcto!
+		                            </div>
+		                        </div>
+		                    </div>
+		                
+		                    <div class="form-row">
+		                        <div class="col-md-4 mb-3">
+		                            <label for="nombre">DNI *</label>
+		                            <input type="text" class="form-control" id="dniEditar" placeholder="55443322R"  required>
+		                            <div class="valid-tooltip">
+		                                Correcto!
+		                            </div>
+		                        </div>
+		
+		                        <div class="col-md-4 mb-3">
+		                            <label for="telefono">Teléfono</label>
+		                            <input type="text" class="form-control" id="telefonoEditar" placeholder="Ingrese número de teléfono">
+		                            <div class="valid-tooltip">
+		                                Correcto!
+		                            </div>
+		                        </div>
+		                
+		                        <div class="col-md-4 mb-3">
+		                            <label for="email">Email *</label>
+		                            <input type="email" class="form-control" id="emailEditar" placeholder="ejemplo@mail.com"  required>
+		                            <div class="valid-tooltip">
+		                            	Correcto!
+		                            </div>
+		                        </div>
+		                    </div>
+		
+		                    <div class="form-row">
+		                        <div class="col-md-4 mb-3">
+		                            <label for="grupoEdad">Grupo de edad *</label>
+		                            <select class="form-control-sm" id="grupoEdadEditar" required>
+		                                <!-- Aquí puedes agregar opciones según tus necesidades -->
+		                                <option selected>Selecciona ...</option>
+		                                <option value="joven">Niño</option>
+		                                <option value="adulto">Adulto</option>
+		                                <option value="jubilado">Jubilado</option>
+		                            </select>
+		                            <div class="valid-tooltip">
+		                                Correcto!
+		                            </div>
+		                        </div>
+		
+		                        <div class="col-md-4 mb-3">
+		                            <label for="telefono">Fecha de Nacimiento *</label>
+		                            <input type="text" class="form-control-sm" id="fechaNacimientoEditar" required>
+		                            <div class="valid-tooltip">
+		                                Correcto!
+		                            </div>
+		                        </div>
+		                    </div>
+		                        
+		                    <div class="form-row">
+		                        <p>Los campos con (*) son obligatorios.</p>
+		                    </div>
+		
+		                </form>
+		            </div>
+		            <div class="modal-footer">
+		                <button type="button" id="btnCerrar" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+		                <button type="button" id="btnEditar" class="btn btn-primary">Ok</button>
+		            </div>
+		        </div>
+		    </div>
+		</div>   
+	    
+	      
+	    <!-- ZONA DE SCRIPTS-->
+	  	<!-- jQuery -->
+	    <script src="../../static/recursosApp/jquery.min.js"></script>
+	    <!-- DataTables JS -->
+	    <script src="../../static/recursosApp/jquery.dataTables.min.js"></script>
+	    <!-- Bootstrap JS -->
+	    <script src="../../static/recursosApp/bootstrap.min.js"></script>
+		 <!-- jQuery UI JS --> 
+	    <script src="../../static/recursosApp/jquery-ui.js"></script>
+	    <!-- Toastr JS --> 
+	    <script src="../../static/recursosApp/toastr.min.js"></script>
+	    
+	    <!-- Archivos JavaScript para nuestra vista -->
+	    <script src="../../static/javascript/clientes/clientes.js"></script>
+	    <!-- script cargar menu navegación y footer -->
+	    <script src="../../static/javascript/script.js"></script>
+	     
+	</body>
+</html>
