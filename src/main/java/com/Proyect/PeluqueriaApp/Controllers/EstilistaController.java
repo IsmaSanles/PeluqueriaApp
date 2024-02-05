@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.Proyect.PeluqueriaApp.Entities.ClienteEntity;
 import com.Proyect.PeluqueriaApp.Entities.EstilistaEntity;
 import com.Proyect.PeluqueriaApp.Services.EstilistaService;
 import jakarta.validation.Valid;
@@ -52,7 +54,7 @@ public class EstilistaController {
 	}
 	
 	@PutMapping("/{id}")
-    public EstilistaEntity modificarEstilista(@Valid @PathVariable Long id, @RequestBody EstilistaEntity nuevoEstilista) {
+    public ResponseEntity<EstilistaEntity> modificarEstilista(@Valid @PathVariable Long id, @RequestBody EstilistaEntity nuevoEstilista) {
 		
 	    // Busco el estilista por el Id
 	    EstilistaEntity estilistaRecuperado = obtenerEstilistaPorId(id);
@@ -66,9 +68,9 @@ public class EstilistaController {
 	        // Guardo el estilista actualizado en el repositorio
 	        estilistaRecuperado = this.estilistaService.modificarEstilista(nuevoEstilista);
 	        
-	        return estilistaRecuperado;
+	        return ResponseEntity.status(HttpStatus.OK).body(estilistaRecuperado);
 	    }else {
-	    	return null;
+	    	return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 

@@ -42,7 +42,7 @@ public class EstilistaEntity {
 	private String telefono;
 	
 	@Column(name="deAlta")
-	private boolean deAlta;
+	private boolean deAlta = true;
 	
 	@Column(name="fechaCreacion", nullable = false)
 	private Date fechaCreacion;
@@ -146,4 +146,13 @@ public class EstilistaEntity {
 	public void setListaCitas(List<CitaEntity> listaCitas) {
 		this.listaCitas = listaCitas;
 	}
+
+	public Date getFechaNacimiento() {
+		return fechaNacimiento;
+	}
+
+	public void setFechaNacimiento(Date fechaNacimiento) {
+		this.fechaNacimiento = fechaNacimiento;
+	}
+	
 }

@@ -12,4 +12,3 @@ public class PeluqueriaAppApplication {
 		System.out.println("App iniciada...");
 	}
 }
-

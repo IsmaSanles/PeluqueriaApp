@@ -1,6 +1,7 @@
 const header = $("header");
 const footer = $("footer");
 
+// código para el menú de navegación
 header.html( `
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333;">
     <div class="container">
@@ -22,6 +23,9 @@ header.html( `
 			        <a class="nav-link" href="../clientes/clientes.html" data-view="">Cliente</a>
 			    </li>
 			    <li class="nav-item">
+			        <a class="nav-link" href="../estilistas/estilistas.html" data-view="">Empleados</a>
+			    </li>
+			    <li class="nav-item">
 			        <a class="nav-link" href="#" data-view="citas.html">Citas</a>
 			    </li>
 			    <li class="nav-item">
@@ -30,16 +34,13 @@ header.html( `
 			    <li class="nav-item">
 			        <a class="nav-link" href="#" data-view="servicios.html">Servicios</a>
 			    </li>
-			    <li class="nav-item">
-			        <a class="nav-link" href="#" data-view="estilistas.html">Estilistas</a>
-			    </li>
 			</ul>
         </div>
     </div>
 </nav>
 `);
 
-
+// código para el footer
 footer.html(`
 <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 border-top bg-dark text-white">
 	 <div class="col-md-4 d-flex align-items-center">
