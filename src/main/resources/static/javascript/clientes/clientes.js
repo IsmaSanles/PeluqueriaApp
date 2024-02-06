@@ -59,8 +59,16 @@ function listarClientes() {
                 </tr>`;
             });
             $("#tbodyClientes").html(content);
+            
+            
             // Inicializa el plugin DataTable con las opciones de configuración
-            $("#tablaClientes").DataTable(dataTableOptions);
+            $("#tablaClientes").DataTable({
+				...dataTableOptions, 
+	            columnDefs: [
+					{ className: "text-center", targets: "_all" }, // centramos todos los textos de las columnas
+			        { targets: [4, 5, 6, 7, 8, 9], orderable: false } // indicamos que las columnas definidas no puedan filtrar
+		    	]
+		    });
             
             
             // Manejador de clic para los botones "Editar Cliente"
@@ -272,39 +280,6 @@ function eliminarCliente(id) {
         }
     });
 }
-
-
-// aquí solo configuro las opciones de configuración para el dataTable
-const dataTableOptions = {
-	"destroy": true,
-	"lengthMenu": [10, 15, 20, 25],
-	"aoColumnDefs": [{className: "text-center", targets: "_all"}], // centramos todos los textos de las columnas
-	//"scrollY": "400px", // Ajusta la altura según tus necesidades
-	//"paging": false, // crea un scroll vertical
-    "scrollCollapse": false, // en 'true' saca un scroll en la DataTable
-    "oLanguage": {
-        "sProcessing":"Procesando...",
-        "sLengthMenu":"Mostrar _MENU_ registros",
-        "sZeroRecords":"No se encontraron resultados",
-        "sEmptyTable":"Ningún dato disponible en esta tabla",
-        "sInfo":"Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-        "sInfoEmpty":"Mostrando registros del 0 al 0 de un total de 0 registros",
-        "sInfoFiltered":"", // dejamos este campo vacío para evitar redundancia
-        "sSearch":"Buscar:",
-        "sLoadingRecords":"Cargando...",
-        "oPaginate": {
-            "sFirst":"Primero",
-            "sLast":"Último",
-            "sNext":"Siguiente",
-            "sPrevious":"Anterior"
-        },
-        Aria: {
-            "sSortAscending":": Activar para ordenar la columna de manera ascendente",
-            "sSortDescending":": Activar para ordenar la columna de manera descendente"
-        }
-    }
-};
-
 
 //Método para mostrar la fecha 'dd-MM-yyyy'
 function formatoFecha(fecha) {

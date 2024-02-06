@@ -16,17 +16,22 @@ public class EstilistaEntity {
 	private Long estilistaId;
 	
 	@NotBlank(message = "El DNI es un campo obligatorio")
+	@Size(min=9, max=9)
+	@Pattern(regexp = "^[0-9]{8}[A-Z]$", message = "El DNI debe tener 8 dígitos numéricos y terminar con una letra")
 	@Column(name="dni", nullable = false)
 	private String dni;
 	
 	@NotBlank(message = "El Nombre es un campo obligatorio")
+	@Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "El nombre debe contener solo letras")
 	@Column(name="nombre", nullable = false)
 	private String nombre;
 	
 	@NotBlank(message = "El primer apellido es un campo obligatorio")
+	@Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "El 1º apellido debe contener solo letras")
 	@Column(name="apellido1", nullable = false)
 	private String apellido1;
 	
+	@Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]*$", message = "El 2º apellido debe contener solo letras")
 	@Column(name="apellido2")
 	private String apellido2;
 	
