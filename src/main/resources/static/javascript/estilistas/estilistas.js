@@ -1,14 +1,14 @@
 
 $(document).ready(function () {
-    listarClientes();
+    listarEstilistas();
     abrirModalCrear();
    	
 });
 
 function abrirModalCrear(){
 	// Manejador de clic para el botón "Crear Nuevo Cliente"
-    $('#crearNuevoCliente').on('click', function () {
-        $('#modalCrearCliente').modal('show');
+    $('#crearNuevoEstilista').on('click', function () {
+        $('#modalCrearEstilista').modal('show');
         
         // datepicker de FechaNacimiento
 	    $("#fechaNacimientoCrear").datepicker({
@@ -19,68 +19,67 @@ function abrirModalCrear(){
 	    
 	    // creamos un escuchador al botón crear del modal de Crear Cliente
 	    $("#btnCrear").on("click", function() {
-	        crearCliente();
+	        crearEstilista();
 	    });
     });
 }
 
 // creo la funcion para listar lo clientes
-function listarClientes() {
+function listarEstilistas() {
     $.ajax({
-        url: "http://localhost:8001/cliente",
+        url: "http://localhost:8001/estilista",
         method: "GET",
         dataType: "json",
         success: function (data) {
         	// Limpia el cuerpo de la tabla
-            $('#tbodyClientes').empty();
+            $('#tbodyEstilistas').empty();
            
         	//console.log(data);
             let content = ``;
-            data.forEach(function (cliente) {
+            data.forEach(function (estilista) {
+				//console.log(estilista);
                 content += `
                 <tr>
-                    <td>${cliente.dni}</td>
-                    <td>${cliente.nombre}</td>
-                    <td>${cliente.apellido1}</td>
-                    <td>${cliente.apellido2}</td>
-                    <td>${formatoFecha(cliente.fechaNacimiento)}</td>
-                    <td>${cliente.grupoEdad}</td>
-                    <td>${cliente.deAlta ? '<i class="bi bi-check-circle-fill text-success"></i>' : '<i class="bi bi-x-circle-fill text-danger"></i>'}</td>
-                    <td>${cliente.telefono}</td>
-                    <td>${cliente.email}</td>
+                    <td>${estilista.dni}</td>
+                    <td>${estilista.nombre}</td>
+                    <td>${estilista.apellido1}</td>
+                    <td>${estilista.apellido2}</td>
+                    <td>${formatoFecha(estilista.fechaNacimiento)}</td>
+                    <td>${estilista.deAlta ? '<i class="bi bi-check-circle-fill text-success"></i>' : '<i class="bi bi-x-circle-fill text-danger"></i>'}</td>
+                    <td>${estilista.telefono}</td>
+                    <td>${estilista.email}</td>
                     <td class="d-flex">
-                        <button class="btn btn-primary mr-2 editarClienteBtn" data-cliente-id="${cliente.clienteId}">
+                        <button class="btn btn-primary mr-2 editarEstilistaBtn" data-estilista-id="${estilista.estilistaId}">
                             <i class="bi bi-pencil-square"></i>
                         </button>
-                        <button class="btn btn-danger eliminarClienteBtn" data-cliente-id="${cliente.clienteId}">
+                        <button class="btn btn-danger eliminarEstilistaBtn" data-estilista-id="${estilista.estilistaId}">
                             <i class="bi bi-trash"></i>
                         </button>
                     </td>
                 </tr>`;
             });
-            $("#tbodyClientes").html(content);
-            
+            $("#tbodyEstilistas").html(content);
             
             // Inicializa el plugin DataTable con las opciones de configuración
-            $("#tablaClientes").DataTable({
-				...dataTableOptions, 
-	            columnDefs: [
-					{ className: "text-center", targets: "_all" }, // centramos todos los textos de las columnas
-			        { targets: [4, 5, 6, 7, 8, 9], orderable: false } // indicamos que las columnas definidas no puedan filtrar
-		    	]
-		    });
+			$("#tablaEstilistas").DataTable({
+			    ...dataTableOptions,
+			    columnDefs: [
+			        { className: "text-center", targets: "_all" }, // centramos todos los textos de las columnas
+			        { targets: [4, 5, 6, 7, 8], orderable: false } // indicamos que las columnas definidas no puedan filtrar
+			    ]
+			});
             
             
             // Manejador de clic para los botones "Editar Cliente"
-		    $('.editarClienteBtn').on('click', function () {
-			    let clienteId = $(this).data("cliente-id");
-			    //console.log("Capturado evento de Editar para id: " + clienteId);
+		    $('.editarEstilistaBtn').on('click', function () {
+			    let estilistaId = $(this).data("estilista-id");
+			    //console.log("Capturado evento de Editar para id: " + estilistaId);
 			    
 			    // abrimos modal Editar
-			    $('#modalEditarCliente').modal('show');
+			    $('#modalEditarEstilista').modal('show');
 			    
 			    // recupero los datos de ese clienteId y relleno los campos
-			    getClienteById(clienteId);
+			    getEstilistaById(estilistaId);
 			    
 			    // datepicker de FechaNacimiento
 			    $("#fechaNacimientoEditar").datepicker({
@@ -90,35 +89,35 @@ function listarClientes() {
 			    });
 			    
 			    
-			    // creamos un escuchador al botón crear del modal de Crear Cliente
+			    //  Manejador de clic para los botones "Editar Estilista"
 			    $("#btnEditar").on("click", function() {
-			        editarCliente(clienteId);
+			        editarEstilista(estilistaId);
 	    		});
 			});
 			
-			// Manejador de clic para los botones "Eliminar Cliente"
-		    $('.eliminarClienteBtn').on('click', function () {
-				let clienteId = $(this).data("cliente-id");
-			    console.log("Capturado evento de Eliminar para id: " + clienteId);
+			// Manejador de clic para los botones "Eliminar Estilista"
+		    $('.eliminarEstilistaBtn').on('click', function () {
+				let estilistaId = $(this).data("estilista-id");
+			    console.log("Capturado evento de Eliminar para id: " + estilistaId);
 				
 				// llamada a la funcion para eliminar (dar de baja)
-				eliminarCliente(clienteId);
+				eliminarEstilista(estilistaId);
 			});
 		    
         },
         error: function (error) {
 			// En caso de error, ocultar la tabla y mostrar el mensaje de fallo
-            $("#tablaClientes").hide();
+            $("#tablaEstilistas").hide();
             $("#mensajeFallo").show();
-            toastr.error("Hubo un error al cargar la tabla de clientes");
+            toastr.error("Hubo un error al cargar la tabla de empleados");
         }
     });
 };
 
 // recuperamos los datos del cliente
-async function getClienteById(id) {
+async function getEstilistaById(id) {
     await $.ajax({
-        url: "http://localhost:8001/cliente/" + id,
+        url: "http://localhost:8001/estilista/" + id,
         method: "GET",
         dataType: "json",
         success: function (data) {
@@ -130,20 +129,19 @@ async function getClienteById(id) {
             $("#dniEditar").val(data.dni);
             $("#telefonoEditar").val(data.telefono);
             $("#emailEditar").val(data.email);
-            $("#grupoEdadEditar").val(data.grupoEdad);
             $("#fechaNacimientoEditar").val(formatoFecha(data.fechaNacimiento));
 	            
         },
         error: function (error) {
             // Manejo de errores
             //console.error("Error al recuperar los datos del cliente");
-            toastr.error("Hubo un error al recuperar los datos del cliente");
+            toastr.error("Hubo un error al recuperar los datos del empleado");
         }
     });
 }
 
-// crear Nuevo Cliente	
-function crearCliente(){
+// crear Nuevo Estilista
+function crearEstilista(){
     // recuperamos los datos para enviar al back
     let nombre = $("#nombreCrear").val();
     let apellido1 = $("#apellido1Crear").val();
@@ -151,15 +149,14 @@ function crearCliente(){
     let dni = $("#dniCrear").val();
     let telefono = $("#telefonoCrear").val();
     let email = $("#emailCrear").val();
-    let grupoEdad = $("#grupoEdadCrear").val();
     let fechaNacimiento = $("#fechaNacimientoCrear").val();
     fechaNacimiento = convertirFechaStringToDate(fechaNacimiento);
     
-    console.log(nombre, apellido1,apellido2,  dni, telefono, email, grupoEdad, fechaNacimiento);
+    console.log(nombre, apellido1 ,apellido2, dni, telefono, email, fechaNacimiento);
 
     // ejecucion de peticion ajax para la conexión con el backend
     $.ajax({
-        url: "http://localhost:8001/cliente/crear",
+        url: "http://localhost:8001/estilista/crear",
         method: "POST",
         dataType: "json",
         contentType: "application/json",
@@ -170,14 +167,13 @@ function crearCliente(){
             dni,
             telefono,
             email,
-            grupoEdad,
             fechaNacimiento
         }),
         success: function (data) {
             //console.log(data);
             
             // Mostrar mensaje de éxito con Toastr
-            toastr.success("Nuevo cliente creado con éxito");
+            toastr.success("Nuevo empleado añadido con éxito");
             
             // Recargar la página después de 1 segundo
             setTimeout(function() {
@@ -188,26 +184,25 @@ function crearCliente(){
             let errorMessage = xhr.responseText;
             console.log(errorMessage);
             // Mostrar mensaje de éxito con Toastr
-            toastr.error("A ocurrido un error al crear el cliente");
+            toastr.error("A ocurrido un error al intentar añadir el empleado");
         }
     });
 };
 
-// editar Cliente	
-function editarCliente(id){
+// editar Estilista	
+function editarEstilista(id){
 	let nombre = $("#nombreEditar").val();
 	let apellido1 = $("#apellido1Editar").val();
 	let apellido2 = $("#apellido2Editar").val();
 	let dni = $("#dniEditar").val();
 	let telefono = $("#telefonoEditar").val();
 	let email = $("#emailEditar").val();
-	let grupoEdad = $("#grupoEdadEditar").val();
 	let fechaNacimiento = $("#fechaNacimientoEditar").val();
 	fechaNacimiento = convertirFechaStringToDate(fechaNacimiento);
 
 	// ejecucion de peticion ajax para la conexión con el backend
     $.ajax({
-        url: "http://localhost:8001/cliente/" + id,
+        url: "http://localhost:8001/estilista/" + id,
         method: "PUT",
         dataType: "json",
         contentType: "application/json",
@@ -218,14 +213,13 @@ function editarCliente(id){
             dni,
             telefono,
             email,
-            grupoEdad,
             fechaNacimiento
         }),
         success: function (data) {
             //console.log(data);
             
             // Mostrar mensaje de éxito con Toastr
-            toastr.success("Datos del cliente editados con éxito");
+            toastr.success("Datos del empleado editados con éxito");
             
             // Recargar la página después de 1 segundo
             setTimeout(function() {
@@ -236,24 +230,24 @@ function editarCliente(id){
             let errorMessage = xhr.responseText;
             console.log(errorMessage);
             // Mostrar mensaje de éxito con Toastr
-            toastr.error("Ocurrió un error al editar los datos del cliente");
+            toastr.error("Ocurrió un error al editar los datos del empleado");
         }
     });
 }
 
 
 // eliminar (dar de baja) Cliente
-function eliminarCliente(id) {
+function eliminarEstilista(id) {
     // ejecucion de peticion ajax para la conexión con el backend
     $.ajax({
-        url: "http://localhost:8001/cliente/" + id,
+        url: "http://localhost:8001/estilista/" + id,
         method: "DELETE",
         dataType: "json",
         success: function (data) {
             console.log("success: " + JSON.stringify(data));
             
             // Mostrar mensaje de éxito con Toastr
-            toastr.success("Cliente dado de baja con éxito");
+            toastr.success("Empleado dado de baja con éxito");
             
             // Recargar la página después de 1 segundo
            	setTimeout(function() {
@@ -269,17 +263,18 @@ function eliminarCliente(id) {
             // Comprobar el código de estado HTTP
             if (xhr.status === 400) {
                 // Código 400 (BadRequest)
-                toastr.error("El cliente ya está dado de baja");
+                toastr.error("El empleado ya está dado de baja");
             } else if (xhr.status === 404) {
                 // Código 404 (NotFound)
-                toastr.error("Cliente no encontrado en la Base de Datos");
+                toastr.error("Empleado no encontrado en la Base de Datos");
             } else {
                 // Otros errores
-                toastr.error("Error al dar de baja al cliente");
+                toastr.error("Error al dar de baja al empleado");
             }
         }
     });
 }
+
 
 //Método para mostrar la fecha 'dd-MM-yyyy'
 function formatoFecha(fecha) {
