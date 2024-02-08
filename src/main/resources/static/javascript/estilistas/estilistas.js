@@ -181,11 +181,25 @@ function crearEstilista(){
             }, 1000);
         },
         error: function (xhr, status, error) {
-            let errorMessage = xhr.responseText;
-            console.log(errorMessage);
-            // Mostrar mensaje de éxito con Toastr
-            toastr.error("A ocurrido un error al intentar añadir el empleado");
-        }
+		    console.log(xhr.responseJSON); // Para depurar, verifica la estructura del objeto de error
+		    
+		    // Manejar los mensajes de error devueltos por el backend
+		    if (xhr.responseJSON) {
+		        // Verificar si hay errores de validación
+		        if (xhr.responseJSON.length > 0) {
+		            // Iterar sobre cada error y mostrar un toast para cada uno
+		            xhr.responseJSON.forEach(error => {
+		                toastr.error(error.defaultMessage);
+		            });
+		        } else {
+		            // Si hay otro tipo de error
+		            toastr.error("Ha ocurrido un error al intentar añadir el estilista");
+		        }
+		    } else {
+		        // Manejar el caso en el que no hay respuesta JSON
+		        toastr.error("No se ha recibido una respuesta del servidor");
+		    }
+		}
     });
 };
 
@@ -244,7 +258,7 @@ function eliminarEstilista(id) {
         method: "DELETE",
         dataType: "json",
         success: function (data) {
-            console.log("success: " + JSON.stringify(data));
+            //console.log("success: " + JSON.stringify(data));
             
             // Mostrar mensaje de éxito con Toastr
             toastr.success("Empleado dado de baja con éxito");

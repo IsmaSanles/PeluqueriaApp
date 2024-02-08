@@ -26,7 +26,7 @@ public class ProductoController {
 		List<ProductoEntity> listadoProductos = this.productoService.listarProductos();
 		
 		if (listadoProductos.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		} else {
 			return ResponseEntity.status(HttpStatus.OK).body(listadoProductos);
 		}
