@@ -26,7 +26,7 @@ public class ProductoController {
 		List<ProductoEntity> listadoProductos = this.productoService.listarProductos();
 		
 		if (listadoProductos.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		} else {
 			return ResponseEntity.status(HttpStatus.OK).body(listadoProductos);
 		}
@@ -53,7 +53,7 @@ public class ProductoController {
 	}
 	
 	@PutMapping("/{id}")
-    public ProductoEntity modificarProducto(@Valid @PathVariable Long id, @RequestBody ProductoEntity nuevoProducto) {
+    public ResponseEntity<ProductoEntity> modificarProducto(@Valid @PathVariable Long id, @RequestBody ProductoEntity nuevoProducto) {
 		
 	    // Busco el producto por el Id
 	    ProductoEntity productoRecuperado = obtenerProductoPorId(id);
@@ -67,10 +67,11 @@ public class ProductoController {
 	        // Guardo el producto actualizado en el repositorio
 	        productoRecuperado = this.productoService.modificarProducto(nuevoProducto);
 	        
-	        return productoRecuperado;
-	    }else {
-	    	return null;
-        }
+		  return ResponseEntity.status(HttpStatus.OK).body(productoRecuperado);
+			        
+			    }else {
+			    	return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		        }
     }
 
     @DeleteMapping("/{id}")
