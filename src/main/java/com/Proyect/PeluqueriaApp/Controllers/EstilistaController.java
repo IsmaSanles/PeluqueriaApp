@@ -7,9 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import com.Proyect.PeluqueriaApp.Entities.ClienteEntity;
 import com.Proyect.PeluqueriaApp.Entities.EstilistaEntity;
 import com.Proyect.PeluqueriaApp.Services.EstilistaService;
 import jakarta.validation.Valid;
@@ -58,8 +57,13 @@ public class EstilistaController {
     }
 	
 	@PutMapping("/{id}")
-    public ResponseEntity<EstilistaEntity> modificarEstilista(@Valid @PathVariable Long id, @RequestBody EstilistaEntity nuevoEstilista) {
-		
+    public ResponseEntity<?> modificarEstilista(@PathVariable Long id, @Valid @RequestBody EstilistaEntity nuevoEstilista, BindingResult result) {
+
+        if (result.hasErrors()) {
+            // Manejar los errores de validación y devolverlos como parte de la respuesta HTTP
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
+        }
+
 	    // Busco el estilista por el Id
 	    EstilistaEntity estilistaRecuperado = obtenerEstilistaPorId(id);
 

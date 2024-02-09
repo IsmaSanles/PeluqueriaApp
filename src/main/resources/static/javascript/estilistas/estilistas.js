@@ -16,7 +16,7 @@ function abrirModalCrear(){
 	        changeYear: true, // permite seleccionar el año en un desplegable
 	        yearRange: "c-100:c+0" // indicamos cuantos años podemos escoger en el pasado y cuantos al futuro (en este caso cero)
 	    });
-	    
+
 	    // creamos un escuchador al botón crear del modal de Crear Cliente
 	    $("#btnCrear").on("click", function() {
 	        crearEstilista();
@@ -146,7 +146,7 @@ function crearEstilista(){
     let nombre = $("#nombreCrear").val();
     let apellido1 = $("#apellido1Crear").val();
     let apellido2 = $("#apellido2Crear").val();
-    let dni = $("#dniCrear").val();
+    let dni = $("#dniCrear").val().toUpperCase(); // aseguramos que la letra del DNI sea Mayúscula
     let telefono = $("#telefonoCrear").val();
     let email = $("#emailCrear").val();
     let fechaNacimiento = $("#fechaNacimientoCrear").val();
@@ -171,7 +171,11 @@ function crearEstilista(){
         }),
         success: function (data) {
             //console.log(data);
-            
+
+            // Quitar clases de error y mensajes de error al tener éxito
+            $(".is-invalid").removeClass("is-invalid"); // Quitar clases de error de todos los campos
+            $(".invalid-tooltip").remove(); // Quitar todos los mensajes de error
+
             // Mostrar mensaje de éxito con Toastr
             toastr.success("Nuevo empleado añadido con éxito");
             
@@ -181,24 +185,37 @@ function crearEstilista(){
             }, 1000);
         },
         error: function (xhr, status, error) {
-		    console.log(xhr.responseJSON); // Para depurar, verifica la estructura del objeto de error
+		    //console.log(xhr.responseJSON); // Para depurar, verifica la estructura del objeto de error
 		    
 		    // Manejar los mensajes de error devueltos por el backend
 		    if (xhr.responseJSON) {
-		        // Verificar si hay errores de validación
-		        if (xhr.responseJSON.length > 0) {
-		            // Iterar sobre cada error y mostrar un toast para cada uno
-		            xhr.responseJSON.forEach(error => {
-		                toastr.error(error.defaultMessage);
-		            });
-		        } else {
-		            // Si hay otro tipo de error
-		            toastr.error("Ha ocurrido un error al intentar añadir el estilista");
-		        }
-		    } else {
-		        // Manejar el caso en el que no hay respuesta JSON
-		        toastr.error("No se ha recibido una respuesta del servidor");
-		    }
+		        // Limpiar campos y mensajes de error antes de procesar los errores
+                $(".is-invalid").removeClass("is-invalid").css("border-width", ""); // Quitar clases de error y estilo personalizado de todos los campos
+                $(".invalid-tooltip").remove(); // Quitar todos los mensajes de error
+
+                xhr.responseJSON.forEach(error => {
+                    // Obtener el nombre del campo y el mensaje de error
+                    let fieldName = error.field;
+                    let errorMessage = error.defaultMessage;
+
+                    // Resaltar el campo con error y mostrar el mensaje de error utilizando las clases de Bootstrap
+                    let inputField = $("#" + fieldName + "Crear"); // Sabiendo que los ids de los inputs siguen el formato "{nombreCampo}Crear"
+
+                    inputField.css("border-width", "2px"); // Añadir estilo para aumentar el grosor del borde
+                    inputField.addClass("is-invalid"); // Agregar clase de Bootstrap para campo inválido
+                    inputField.next(".valid-tooltip").remove(); // Eliminar cualquier mensaje de validación anterior
+                    inputField.next(".invalid-tooltip").remove(); // Eliminar cualquier mensaje de error anterior
+
+                    // Si el campo está vacío, agregar mensaje predeterminado de campo obligatorio
+                    if (!inputField.val().trim()) {
+                        errorMessage = "este campo es un campo obligatorio";
+                    }
+
+                    inputField.after("<div class='invalid-tooltip'>" + errorMessage + "</div>"); // Mostrar mensaje de error
+                });
+            } else {
+                toastr.error('Ha ocurrido un error al intentar añadir el empleado');
+            }
 		}
     });
 };
@@ -213,6 +230,8 @@ function editarEstilista(id){
 	let email = $("#emailEditar").val();
 	let fechaNacimiento = $("#fechaNacimientoEditar").val();
 	fechaNacimiento = convertirFechaStringToDate(fechaNacimiento);
+
+    console.log(nombre, apellido1 ,apellido2, dni, telefono, email, fechaNacimiento);
 
 	// ejecucion de peticion ajax para la conexión con el backend
     $.ajax({
@@ -231,7 +250,11 @@ function editarEstilista(id){
         }),
         success: function (data) {
             //console.log(data);
-            
+
+            // Quitar clases de error y mensajes de error al tener éxito
+            $(".is-invalid").removeClass("is-invalid"); // Quitar clases de error de todos los campos
+            $(".invalid-tooltip").remove(); // Quitar todos los mensajes de error
+
             // Mostrar mensaje de éxito con Toastr
             toastr.success("Datos del empleado editados con éxito");
             
@@ -241,10 +264,37 @@ function editarEstilista(id){
             }, 1000);
         },
         error: function (xhr, status, error) {
-            let errorMessage = xhr.responseText;
-            console.log(errorMessage);
-            // Mostrar mensaje de éxito con Toastr
-            toastr.error("Ocurrió un error al editar los datos del empleado");
+            //console.log(xhr.responseJSON); // Para depurar, verifica la estructura del objeto de error
+
+            // Manejar los mensajes de error devueltos por el backend
+            if (xhr.responseJSON) {
+                // Limpiar campos y mensajes de error antes de procesar los errores
+                $(".is-invalid").removeClass("is-invalid").css("border-width", ""); // Quitar clases de error y estilo personalizado de todos los campos
+                $(".invalid-tooltip").remove(); // Quitar todos los mensajes de error
+
+                xhr.responseJSON.forEach(error => {
+                    // Obtener el nombre del campo y el mensaje de error
+                    let fieldName = error.field;
+                    let errorMessage = error.defaultMessage;
+
+                    // Resaltar el campo con error y mostrar el mensaje de error utilizando las clases de Bootstrap
+                    let inputField = $("#" + fieldName + "Editar"); // Sabiendo que los ids de los inputs siguen el formato "{nombreCampo}Crear"
+
+                    inputField.css("border-width", "2px"); // Añadir estilo para aumentar el grosor del borde
+                    inputField.addClass("is-invalid"); // Agregar clase de Bootstrap para campo inválido
+                    inputField.next(".valid-tooltip").remove(); // Eliminar cualquier mensaje de validación anterior
+                    inputField.next(".invalid-tooltip").remove(); // Eliminar cualquier mensaje de error anterior
+
+                    // Si el campo está vacío, agregar mensaje predeterminado de campo obligatorio
+                    if (!inputField.val().trim()) {
+                        errorMessage = "este campo es un campo obligatorio";
+                    }
+
+                    inputField.after("<div class='invalid-tooltip'>" + errorMessage + "</div>"); // Mostrar mensaje de error
+                });
+            } else {
+                toastr.error('Ha ocurrido un error al intentar editar los datos del empleado');
+            }
         }
     });
 }

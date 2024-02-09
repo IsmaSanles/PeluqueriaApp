@@ -15,18 +15,18 @@ public class EstilistaEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long estilistaId;
 	
-	@NotBlank(message = "El DNI es un campo obligatorio")
-	@Size(min=9, max=9)
+	@NotBlank
+	@Size(min=9, max=9, message="el tamaño debe ser exactamente de 9 caracteres")
 	@Pattern(regexp = "^[0-9]{8}[A-Z]$", message = "El DNI debe tener 8 dígitos numéricos y terminar con una letra")
 	@Column(name="dni", nullable = false)
 	private String dni;
 	
-	@NotBlank(message = "El Nombre es un campo obligatorio")
+	@NotBlank
 	@Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "El nombre debe contener solo letras")
 	@Column(name="nombre", nullable = false)
 	private String nombre;
 	
-	@NotBlank(message = "El primer apellido es un campo obligatorio")
+	@NotBlank
 	@Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "El 1º apellido debe contener solo letras")
 	@Column(name="apellido1", nullable = false)
 	private String apellido1;
@@ -35,11 +35,13 @@ public class EstilistaEntity {
 	@Column(name="apellido2")
 	private String apellido2;
 	
-	@NotBlank(message = "El Email es un campo obligatorio")
+	@NotBlank
 	@Email
 	@Column(unique = true, name="email", nullable = false)
 	private String email;
-	
+
+	@Past
+	@NotNull
 	@Column(name="fechaNacimiento", nullable = false)
 	private Date fechaNacimiento;
 	
