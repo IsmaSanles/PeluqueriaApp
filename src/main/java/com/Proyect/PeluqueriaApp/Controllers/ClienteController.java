@@ -3,9 +3,12 @@ package com.Proyect.PeluqueriaApp.Controllers;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import com.Proyect.PeluqueriaApp.Entities.EstilistaEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import com.Proyect.PeluqueriaApp.Entities.ClienteEntity;
 import com.Proyect.PeluqueriaApp.Services.ClienteService;
@@ -43,17 +46,26 @@ public class ClienteController {
 	}
 	
 	@PostMapping("/crear")
-	public ClienteEntity crearCliente(@Valid @RequestBody ClienteEntity cliente) {
-	    
+	public ResponseEntity<?> crearCliente(@Valid @RequestBody ClienteEntity cliente, BindingResult result) {
+		if (result.hasErrors()) {
+			// Manejar los errores de validación y devolverlos como parte de la respuesta HTTP
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
+		}
+
 	    cliente.setFechaCreacion(new Date());
 
-	    // Llama al servicio para crear el cliente
-	    return this.clienteService.crearCliente(cliente);
+		// Si no hay errores de validación, crear el estilista
+		ClienteEntity nuevoCliente = clienteService.crearCliente(cliente);
+		return ResponseEntity.status(HttpStatus.OK).body(nuevoCliente);
 	}
 	
 	@PutMapping("/{id}")
-    public ResponseEntity<ClienteEntity> modificarCliente(@Valid @PathVariable Long id, @RequestBody ClienteEntity nuevoCliente) {
-		
+    public ResponseEntity<?> modificarCliente(@PathVariable Long id, @Valid @RequestBody ClienteEntity nuevoCliente, BindingResult result) {
+		if (result.hasErrors()) {
+			// Manejar los errores de validación y devolverlos como parte de la respuesta HTTP
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
+		}
+
 	    // Busco el cliente por el Id en la BD
 	    ClienteEntity clienteRecuperado = obtenerClientePorId(id);
 

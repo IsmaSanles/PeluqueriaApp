@@ -175,6 +175,10 @@ function crearCliente(){
         }),
         success: function (data) {
             //console.log(data);
+
+             // Quitar clases de error y mensajes de error al tener éxito
+            $(".is-invalid").removeClass("is-invalid"); // Quitar clases de error de todos los campos
+            $(".invalid-tooltip").remove(); // Quitar todos los mensajes de error
             
             // Mostrar mensaje de éxito con Toastr
             toastr.success("Nuevo cliente creado con éxito");
@@ -185,10 +189,37 @@ function crearCliente(){
             }, 1000);
         },
         error: function (xhr, status, error) {
-            let errorMessage = xhr.responseText;
-            console.log(errorMessage);
-            // Mostrar mensaje de éxito con Toastr
-            toastr.error("A ocurrido un error al crear el cliente");
+            console.log(xhr.responseJSON); // Para depurar, verifica la estructura del objeto de error
+
+            // Manejar los mensajes de error devueltos por el backend
+            if (xhr.responseJSON) {
+                // Limpiar campos y mensajes de error antes de procesar los errores
+                $(".is-invalid").removeClass("is-invalid").css("border-width", ""); // Quitar clases de error y estilo personalizado de todos los campos
+                $(".invalid-tooltip").remove(); // Quitar todos los mensajes de error
+
+                xhr.responseJSON.forEach(error => {
+                    // Obtener el nombre del campo y el mensaje de error
+                    let fieldName = error.field;
+                    let errorMessage = error.defaultMessage;
+
+                    // Resaltar el campo con error y mostrar el mensaje de error utilizando las clases de Bootstrap
+                    let inputField = $("#" + fieldName + "Crear"); // Sabiendo que los ids de los inputs siguen el formato "{nombreCampo}Crear"
+
+                    inputField.css("border-width", "2px"); // Añadir estilo para aumentar el grosor del borde
+                    inputField.addClass("is-invalid"); // Agregar clase de Bootstrap para campo inválido
+                    inputField.next(".valid-tooltip").remove(); // Eliminar cualquier mensaje de validación anterior
+                    inputField.next(".invalid-tooltip").remove(); // Eliminar cualquier mensaje de error anterior
+
+                    // Si el campo está vacío o es null, agregar mensaje predeterminado de campo obligatorio
+                    if (!inputField.val() || !inputField.val().trim()) {
+                        errorMessage = "Este es un campo obligatorio";
+                    }
+
+                    inputField.after("<div class='invalid-tooltip'>" + errorMessage + "</div>"); // Mostrar mensaje de error
+                });
+            } else {
+                toastr.error('Ha ocurrido un error al intentar añadir el Cliente');
+            }
         }
     });
 };
@@ -204,6 +235,8 @@ function editarCliente(id){
 	let grupoEdad = $("#grupoEdadEditar").val();
 	let fechaNacimiento = $("#fechaNacimientoEditar").val();
 	fechaNacimiento = convertirFechaStringToDate(fechaNacimiento);
+
+    console.log(nombre, apellido1,apellido2,  dni, telefono, email, grupoEdad, fechaNacimiento);
 
 	// ejecucion de peticion ajax para la conexión con el backend
     $.ajax({
@@ -223,6 +256,10 @@ function editarCliente(id){
         }),
         success: function (data) {
             //console.log(data);
+
+            // Quitar clases de error y mensajes de error al tener éxito
+            $(".is-invalid").removeClass("is-invalid"); // Quitar clases de error de todos los campos
+            $(".invalid-tooltip").remove(); // Quitar todos los mensajes de error
             
             // Mostrar mensaje de éxito con Toastr
             toastr.success("Datos del cliente editados con éxito");
@@ -233,10 +270,37 @@ function editarCliente(id){
             }, 1000);
         },
         error: function (xhr, status, error) {
-            let errorMessage = xhr.responseText;
-            console.log(errorMessage);
-            // Mostrar mensaje de éxito con Toastr
-            toastr.error("Ocurrió un error al editar los datos del cliente");
+            console.log(xhr.responseJSON); // Para depurar, verifica la estructura del objeto de error
+
+            // Manejar los mensajes de error devueltos por el backend
+            if (xhr.responseJSON) {
+                // Limpiar campos y mensajes de error antes de procesar los errores
+                $(".is-invalid").removeClass("is-invalid").css("border-width", ""); // Quitar clases de error y estilo personalizado de todos los campos
+                $(".invalid-tooltip").remove(); // Quitar todos los mensajes de error
+
+                xhr.responseJSON.forEach(error => {
+                    // Obtener el nombre del campo y el mensaje de error
+                    let fieldName = error.field;
+                    let errorMessage = error.defaultMessage;
+
+                    // Resaltar el campo con error y mostrar el mensaje de error utilizando las clases de Bootstrap
+                    let inputField = $("#" + fieldName + "Editar"); // Sabiendo que los ids de los inputs siguen el formato "{nombreCampo}Editar"
+
+                    inputField.css("border-width", "2px"); // Añadir estilo para aumentar el grosor del borde
+                    inputField.addClass("is-invalid"); // Agregar clase de Bootstrap para campo inválido
+                    inputField.next(".valid-tooltip").remove(); // Eliminar cualquier mensaje de validación anterior
+                    inputField.next(".invalid-tooltip").remove(); // Eliminar cualquier mensaje de error anterior
+
+                    // Si el campo está vacío, agregar mensaje predeterminado de campo obligatorio
+                    if (!inputField.val() || !inputField.val().trim()) {
+                        errorMessage = "Este es un campo obligatorio";
+                    }
+
+                    inputField.after("<div class='invalid-tooltip'>" + errorMessage + "</div>"); // Mostrar mensaje de error
+                });
+            } else {
+                toastr.error('Ha ocurrido un error al intentar editar los datos del cliente');
+            }
         }
     });
 }

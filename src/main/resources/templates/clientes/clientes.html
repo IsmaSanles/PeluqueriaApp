@@ -82,25 +82,16 @@
 		                        <div class="col-md-4 mb-3">
 		                            <label for="nombre">Nombre *</label>
 		                            <input type="text" class="form-control" id="nombreCrear" placeholder="Nombre"  required>
-		                            <div class="valid-tooltip">
-		                                Correcto!
-		                            </div>
 		                        </div>
 		                
 		                        <div class="col-md-4 mb-3">
 		                            <label for="apellido1">1º Apellido *</label>
 		                            <input type="text" class="form-control" id="apellido1Crear" placeholder="1º Apellido" required>
-		                            <div class="valid-tooltip">
-		                                Correcto!
-		                            </div>
 		                        </div>
 		                
 		                        <div class="col-md-4 mb-3">
 		                            <label for="apellido2">2º Apellido</label>
 		                            <input type="text" class="form-control" id="apellido2Crear" placeholder="2º Apellido">
-		                            <div class="valid-tooltip">
-		                                Correcto!
-		                            </div>
 		                        </div>
 		                    </div>
 		                
@@ -108,49 +99,34 @@
 		                        <div class="col-md-4 mb-3">
 		                            <label for="nombre">DNI *</label>
 		                            <input type="text" class="form-control" id="dniCrear" placeholder="55443322R"  required>
-		                            <div class="valid-tooltip">
-		                                Correcto!
-		                            </div>
 		                        </div>
 		
 		                        <div class="col-md-4 mb-3">
 		                            <label for="telefono">Teléfono</label>
 		                            <input type="text" class="form-control" id="telefonoCrear" placeholder="Ingrese número de teléfono">
-		                            <div class="valid-tooltip">
-		                                Correcto!
-		                            </div>
 		                        </div>
 		                
 		                        <div class="col-md-4 mb-3">
 		                            <label for="email">Email *</label>
 		                            <input type="email" class="form-control" id="emailCrear" placeholder="ejemplo@mail.com"  required>
-		                            <div class="valid-tooltip">
-		                            	Correcto!
-		                            </div>
 		                        </div>
 		                    </div>
 		
 		                    <div class="form-row">
 		                        <div class="col-md-4 mb-3">
 		                            <label for="grupoEdad">Grupo de edad *</label>
-		                            <select class="form-control-sm" id="grupoEdadCrear" required>
+		                            <select class="form-control" id="grupoEdadCrear" required>
 		                                <!-- Aquí puedes agregar opciones según tus necesidades -->
-		                                <option selected>Selecciona ...</option>
+		                                <option disabled selected>Selecciona ...</option>
 		                                <option value="joven">Niño</option>
 		                                <option value="adulto">Adulto</option>
 		                                <option value="jubilado">Jubilado</option>
 		                            </select>
-		                            <div class="valid-tooltip">
-		                                Correcto!
-		                            </div>
 		                        </div>
 		
 		                        <div class="col-md-4 mb-3">
-		                            <label for="telefono">Fecha de Nacimiento *</label>
-		                            <input type="text" class="form-control-sm" id="fechaNacimientoCrear" required>
-		                            <div class="valid-tooltip">
-		                                Correcto!
-		                            </div>
+		                            <label for="fechaNacimiento">Fecha de Nacimiento *</label>
+		                            <input type="text" class="form-control" id="fechaNacimientoCrear" required>
 		                        </div>
 		                    </div>
 		                        
@@ -185,75 +161,51 @@
 		                        <div class="col-md-4 mb-3">
 		                            <label for="nombre">Nombre *</label>
 		                            <input type="text" class="form-control" id="nombreEditar" placeholder="Nombre"  required>
-		                            <div class="valid-tooltip">
-		                                Correcto!
-		                            </div>
 		                        </div>
 		                
 		                        <div class="col-md-4 mb-3">
 		                            <label for="apellido1">1º Apellido *</label>
 		                            <input type="text" class="form-control" id="apellido1Editar" placeholder="1º Apellido" required>
-		                            <div class="valid-tooltip">
-		                                Correcto!
-		                            </div>
 		                        </div>
 		                
 		                        <div class="col-md-4 mb-3">
 		                            <label for="apellido2">2º Apellido</label>
 		                            <input type="text" class="form-control" id="apellido2Editar" placeholder="2º Apellido">
-		                            <div class="valid-tooltip">
-		                                Correcto!
-		                            </div>
 		                        </div>
 		                    </div>
 		                
 		                    <div class="form-row">
 		                        <div class="col-md-4 mb-3">
-		                            <label for="nombre">DNI *</label>
+		                            <label for="dni">DNI *</label>
 		                            <input type="text" class="form-control" id="dniEditar" placeholder="55443322R"  required>
-		                            <div class="valid-tooltip">
-		                                Correcto!
-		                            </div>
 		                        </div>
 		
 		                        <div class="col-md-4 mb-3">
 		                            <label for="telefono">Teléfono</label>
 		                            <input type="text" class="form-control" id="telefonoEditar" placeholder="Ingrese número de teléfono">
-		                            <div class="valid-tooltip">
-		                                Correcto!
-		                            </div>
 		                        </div>
 		                
 		                        <div class="col-md-4 mb-3">
 		                            <label for="email">Email *</label>
 		                            <input type="email" class="form-control" id="emailEditar" placeholder="ejemplo@mail.com"  required>
-		                            <div class="valid-tooltip">
-		                            	Correcto!
-		                            </div>
 		                        </div>
 		                    </div>
 		
 		                    <div class="form-row">
 		                        <div class="col-md-4 mb-3">
 		                            <label for="grupoEdad">Grupo de edad *</label>
-		                            <select class="form-control-sm" id="grupoEdadEditar" required>
+		                            <select class="form-control" id="grupoEdadEditar" required>
 		                                <!-- Aquí puedes agregar opciones según tus necesidades -->
-		                                <option selected>Selecciona ...</option>
+		                                <option disabled selected>Selecciona ...</option>
 		                                <option value="joven">Niño</option>
 		                                <option value="adulto">Adulto</option>
 		                                <option value="jubilado">Jubilado</option>
 		                            </select>
-		                            <div class="valid-tooltip">
-		                                Correcto!
-		                            </div>
 		                        </div>
 		
 		                        <div class="col-md-4 mb-3">
-		                            <label for="telefono">Fecha de Nacimiento *</label>
-		                            <input type="text" class="form-control-sm" id="fechaNacimientoEditar" required>
-		                            <div class="valid-tooltip">
-		                                Correcto!
-		                            </div>
+		                            <label for="fechaNacimiento">Fecha de Nacimiento *</label>
+		                            <input type="text" class="form-control" id="fechaNacimientoEditar" required>
 		                        </div>
 		                    </div>
 		                        

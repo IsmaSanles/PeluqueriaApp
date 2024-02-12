@@ -16,7 +16,7 @@ public class EstilistaEntity {
 	private Long estilistaId;
 	
 	@NotBlank
-	@Size(min=9, max=9, message="el tamaño debe ser exactamente de 9 caracteres")
+	@Size(min=9, max=9, message="El tamaño debe ser exactamente de 9 caracteres")
 	@Pattern(regexp = "^[0-9]{8}[A-Z]$", message = "El DNI debe tener 8 dígitos numéricos y terminar con una letra")
 	@Column(name="dni", nullable = false)
 	private String dni;

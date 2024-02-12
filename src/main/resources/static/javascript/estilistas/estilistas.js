@@ -152,7 +152,7 @@ function crearEstilista(){
     let fechaNacimiento = $("#fechaNacimientoCrear").val();
     fechaNacimiento = convertirFechaStringToDate(fechaNacimiento);
     
-    console.log(nombre, apellido1 ,apellido2, dni, telefono, email, fechaNacimiento);
+    //console.log(nombre, apellido1 ,apellido2, dni, telefono, email, fechaNacimiento);
 
     // ejecucion de peticion ajax para la conexión con el backend
     $.ajax({
@@ -208,7 +208,7 @@ function crearEstilista(){
 
                     // Si el campo está vacío, agregar mensaje predeterminado de campo obligatorio
                     if (!inputField.val().trim()) {
-                        errorMessage = "este campo es un campo obligatorio";
+                        errorMessage = "Este es un campo obligatorio";
                     }
 
                     inputField.after("<div class='invalid-tooltip'>" + errorMessage + "</div>"); // Mostrar mensaje de error
@@ -231,7 +231,7 @@ function editarEstilista(id){
 	let fechaNacimiento = $("#fechaNacimientoEditar").val();
 	fechaNacimiento = convertirFechaStringToDate(fechaNacimiento);
 
-    console.log(nombre, apellido1 ,apellido2, dni, telefono, email, fechaNacimiento);
+    //console.log(nombre, apellido1 ,apellido2, dni, telefono, email, fechaNacimiento);
 
 	// ejecucion de peticion ajax para la conexión con el backend
     $.ajax({
@@ -287,7 +287,7 @@ function editarEstilista(id){
 
                     // Si el campo está vacío, agregar mensaje predeterminado de campo obligatorio
                     if (!inputField.val().trim()) {
-                        errorMessage = "este campo es un campo obligatorio";
+                        errorMessage = "Este es un campo obligatorio";
                     }
 
                     inputField.after("<div class='invalid-tooltip'>" + errorMessage + "</div>"); // Mostrar mensaje de error
