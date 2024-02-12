@@ -50,7 +50,9 @@ public class EstilistaController {
             // Manejar los errores de validación y devolverlos como parte de la respuesta HTTP
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
         }
-        
+
+		estilista.setFechaCreacion(new Date());
+
         // Si no hay errores de validación, crear el estilista
         EstilistaEntity nuevoEstilista = estilistaService.crearEstilista(estilista);
         return ResponseEntity.status(HttpStatus.OK).body(nuevoEstilista);

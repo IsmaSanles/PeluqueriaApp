@@ -16,11 +16,11 @@ public class ServicioEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long servicioId;
 	
-	@NotBlank(message = "El Nombre es un campo obligatorio")
+	@NotBlank
 	@Column(name="nombre", nullable = false)
 	private String nombre;
 	
-	@NotNull(message = "El Precio es un campo obligatorio")
+	@NotNull
 	@Column(name="precio", nullable = false)
 	private BigDecimal precio;
 	
