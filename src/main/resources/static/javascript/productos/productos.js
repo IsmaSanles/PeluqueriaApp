@@ -55,7 +55,7 @@ function listarProductos() {
 				...dataTableOptions, 
 	            columnDefs: [
 					{ className: "text-center", targets: "_all" }, // centramos todos los textos de las columnas
-			        { targets: [4, 5], orderable: false } // indicamos que las columnas definidas no puedan filtrar
+			        { targets: [3, 4, 5], orderable: false } // indicamos que las columnas definidas no puedan filtrar
 		    	]
 		    });
             
