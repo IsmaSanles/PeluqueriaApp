@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Servicios</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../../static/recursosApp/bootstrap.min.css">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="../../static/recursosApp/jquery.dataTables.min.css">
+    <!-- jQuery UI CSS -->
+    <link rel="stylesheet" href="../../static/recursosApp/jquery-ui.css">
+    <!-- Bootstrap Icons CSS -->
+    <link rel="stylesheet" href="../../static/recursosApp/icons-main/font/bootstrap-icons.min.css">
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="../../static/recursosApp/toastr.min.css">
+
+</head>
+
+<body style="background: #e8e2d9; height: 300px;">
+
+<header>
+    <!-- Aquí se carga el header mediante un archivo javascript -->
+</header>
+
+<div class="container">
+    <div class="container my-4">
+        <h1 class="text-center font-weight-bold">Gestión de Servicios</h1>
+    </div>
+    <hr>
+
+    <div class="container my-4">
+        <button type="button" id="crearNuevoServicio" class="btn btn-primary btn-lg">Nuevo Servicio</button>
+    </div>
+
+    <div class="container my-4">
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                <table id="tablaServicios" class="table table-striped">
+                    <thead  id="theadServicios">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Duracion</th>
+                        <th>De Alta</th>
+                        <th>Descripción</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbodyServicios">
+                    <!-- Aquí se agregarán las filas con datos -->
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modales -->
+<!-- Modal Crear -->
+<div class="modal fade" data-backdrop="static" id="modalCrearServicio" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width: 1100px;">
+        <div class="modal-content">
+            <!-- modal-header -->
+            <div class="modal-header">
+                <h5 class="modal-title">Crear nuevo servicio</h5>
+            </div>
+            <!-- modal-body -->
+            <div class="modal-body">
+
+                <form class="needs-validation" novalidate>
+
+                    <div class="form-row">
+
+                        <div class="col-md-4 mb-3">
+                            <label for="nombre">Nombre *</label>
+                            <input type="text" class="form-control" id="nombreCrear" placeholder="Nombre"  required>
+                            <div class="valid-tooltip">
+                                Correcto!
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label for="precio">Precio *</label>
+                            <input type="text" class="form-control" id="precioCrear" placeholder="Indica el precio"  required>
+                            <div class="valid-tooltip">
+                                Correcto!
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label for="duracion">Duracion *</label>
+                            <input type="number" class="form-control" id="duracionCrear" placeholder="Ingrese la duracion del servicio" required>
+                            <div class="valid-tooltip">
+                                Correcto!
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="form-row">
+
+                        <div class="col-md-4 mb-3">
+                            <label for="descripcion">Descripción</label>
+                            <textarea class="form-control" id="descripcionCrear" placeholder="Añade una descripción del servicio"></textarea>
+                            <div class="valid-tooltip">
+                                Correcto!
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="form-row">
+                        <p>Los campos con (*) son obligatorios.</p>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnCerrar" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" id="btnCrear" class="btn btn-primary">Crear</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Update -->
+<div class="modal fade" data-backdrop="static" id="modalEditarServicio" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width: 1100px;">
+        <div class="modal-content">
+            <!-- modal-header -->
+            <div class="modal-header">
+                <h5 class="modal-title">Editar servicio</h5>
+            </div>
+            <!-- modal-body -->
+            <div class="modal-body">
+
+                <form class="needs-validation" novalidate>
+
+                    <div class="form-row">
+
+                        <div class="col-md-4 mb-3">
+                            <label for="nombre">Nombre *</label>
+                            <input type="text" class="form-control" id="nombreEditar" placeholder="Nombre"  required>
+                            <div class="valid-tooltip">
+                                Correcto!
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label for="precio">Precio *</label>
+                            <input type="text" class="form-control" id="precioEditar" placeholder="Indica el precio"  required>
+                            <div class="valid-tooltip">
+                                Correcto!
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label for="duracion">Duracion</label>
+                            <input type="number" class="form-control" id="duracionEditar" placeholder="Ingrese la duracion del servicio">
+                            <div class="valid-tooltip">
+                                Correcto!
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="form-row">
+
+                        <div class="col-md-4 mb-3">
+                            <label for="descripcion">Descripción</label>
+                            <textarea class="form-control" id="descripcionEditar" placeholder="Añade una descripción del producto"></textarea>
+                            <div class="valid-tooltip">
+                                Correcto!
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="form-row">
+                        <p>Los campos con (*) son obligatorios.</p>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnCerrar" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" id="btnEditar" class="btn btn-primary">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ZONA DE SCRIPTS-->
+<!-- jQuery -->
+<script src="../../static/recursosApp/jquery.min.js"></script>
+<!-- DataTables JS -->
+<script src="../../static/recursosApp/jquery.dataTables.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="../../static/recursosApp/bootstrap.min.js"></script>
+<!-- jQuery UI JS -->
+<script src="../../static/recursosApp/jquery-ui.js"></script>
+<!-- Toastr JS -->
+<script src="../../static/recursosApp/toastr.min.js"></script>
+
+
+<!-- Archivos JavaScript opciones de DataTable -->
+<script src="../../static/javascript/dataTablesConfig.js"></script>
+<!-- script cargar menu navegación y footer -->
+<script src="../../static/javascript/menuNav_footer.js"></script>
+<!-- Archivos JavaScript para nuestra vista -->
+<script src="../../static/javascript/servicios/servicios.js"></script>
+
+
+</body>
+</html>
