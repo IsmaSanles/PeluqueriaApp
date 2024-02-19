@@ -22,12 +22,11 @@ public class ServicioEntity {
 	private String nombre;
 	
 	@NotNull
-	
 	@Column(name="precio", nullable = false)
 	private BigDecimal precio;
 	
 	@NotNull
-    @Positive
+  @Positive
 	@Column(name="duracion", nullable = false)
 	private Integer duracion;
 	

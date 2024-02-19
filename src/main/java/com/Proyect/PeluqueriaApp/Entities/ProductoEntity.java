@@ -16,14 +16,14 @@ public class ProductoEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long productoId;
 	
-	@NotBlank(message = "El Nombre es un campo obligatorio")
+	@NotBlank
 	@Column(name="nombre", nullable = false)
 	private String nombre;
 	
 	@Column(name="descripcion")
 	private String descripcion;
 	
-	@NotNull(message = "El Precio es un campo obligatorio")
+	@NotNull
 	@Column(name="precio", nullable = false)
 	private BigDecimal precio;
 	
