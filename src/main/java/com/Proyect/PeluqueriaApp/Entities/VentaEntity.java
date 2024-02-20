@@ -1,8 +1,7 @@
 package com.Proyect.PeluqueriaApp.Entities;
 
 import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
@@ -18,23 +17,23 @@ public class VentaEntity {
 	@Column(name="fechaVenta", nullable = false)
 	private Date fechaVenta;
 	
-	@NotNull(message = "Debes indicar el numero de unidades")
+	@NotNull
 	@Column(name="udsVendidas", nullable = false)
 	private int udsVendidas;
-	
+
 	
 // ------------------------------------------------------- RELACIONES --------------------------------------------------------------		
 	/* cada Venta tendrá un solo Cliente */
 	@ManyToOne
-	@NotNull(message = "El cliente no puede ser nulo") // utilizamos NotNull para valores numéricos
-	@JsonIgnore
+	@NotNull// utilizamos NotNull para valores numéricos
+	@JsonIgnoreProperties({"ventas"}) // Evitar bucle infinito al serializar ClienteEntity
     @JoinColumn(name = "clienteId", nullable = false)
 	private ClienteEntity clienteId;
 	
 	/* cada Venta tendrá un solo Producto */
 	@ManyToOne
-	@NotNull(message = "El producto no puede ser nulo") // utilizamos NotNull para valores numéricos
-	@JsonIgnore
+	@NotNull// utilizamos NotNull para valores numéricos
+	@JsonIgnoreProperties({"ventas"}) // Evitar bucle infinito al serializar ProductoEntity
     @JoinColumn(name = "productoId", nullable = false)
 	private ProductoEntity productoId;
 

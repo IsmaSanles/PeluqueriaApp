@@ -24,7 +24,7 @@ public class ServicioEntity {
 	@Column(name="precio", nullable = false)
 	private BigDecimal precio;
 	
-	@NotNull(message = "La duración es un campo obligatorio")
+	@NotNull
 	@Column(name="duracion", nullable = false)
 	private int duracion;
 	

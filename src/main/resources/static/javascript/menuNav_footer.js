@@ -17,23 +17,26 @@ header.html( `
             <!-- Actualiza los atributos href a atributos data-view -->
 			<ul class="navbar-nav ml-auto">
 			    <li class="nav-item">
-			        <a class="nav-link" href="../index/index.html" data-view="">Inicio</a>
+			        <a class="nav-link" href="../index/index.html" data-view="index.html">Inicio</a>
 			    </li>
 			    <li class="nav-item">
-			        <a class="nav-link" href="../clientes/clientes.html" data-view="">Cliente</a>
+			        <a class="nav-link" href="../clientes/clientes.html" data-view="clientes.html">Cliente</a>
 			    </li>
 			    <li class="nav-item">
-			        <a class="nav-link" href="../estilistas/estilistas.html" data-view="">Empleados</a>
-			    </li>
-			    <li class="nav-item">
-			        <a class="nav-link" href="#" data-view="citas.html">Citas</a>
-			    </li>
-			    <li class="nav-item">
-			        <a class="nav-link" href="../productos/productos.html" data-view="productos.html">Productos</a>
+			        <a class="nav-link" href="../estilistas/estilistas.html" data-view="estilistas.html">Empleados</a>
 			    </li>
 			    <li class="nav-item">
 			        <a class="nav-link" href="#" data-view="servicios.html">Servicios</a>
 			    </li>
+			    <li class="nav-item">
+                    <a class="nav-link" href="#" data-view="citas.html">Citas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../productos/productos.html" data-view="productos.html">Productos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../ventas/ventas.html" data-view="ventas.html">Ventas</a>
+                </li>
 			</ul>
         </div>
     </div>

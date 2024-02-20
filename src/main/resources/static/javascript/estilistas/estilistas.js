@@ -78,7 +78,7 @@ function listarEstilistas() {
 			    // abrimos modal Editar
 			    $('#modalEditarEstilista').modal('show');
 			    
-			    // recupero los datos de ese clienteId y relleno los campos
+			    // recupero los datos de ese estilistaId y relleno los campos
 			    getEstilistaById(estilistaId);
 			    
 			    // datepicker de FechaNacimiento
