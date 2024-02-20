@@ -49,4 +49,10 @@ public class VentaService {
 	public List<VentaEntity> getAllVentasConDetalles() {
 		return ventaRepository.getAllVentasConDetalles();
 	}
+
+	/*
+	public List<VentaEntity> getVentaConProductosPorCliente(Long clienteId,Long ventaId) {
+		return (List<VentaEntity>) (List<VentaEntity>) ventaRepository.getVentaConProductosPorCliente(clienteId, ventaId);
+	}
+	*/
 }

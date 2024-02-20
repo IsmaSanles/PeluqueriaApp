@@ -3,6 +3,8 @@ package com.Proyect.PeluqueriaApp.Entities;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -41,9 +43,13 @@ public class ProductoEntity {
 	
 // ------------------------------------------------------- RELACIONES --------------------------------------------------------------	
 	/* Un producto estará disponible para multiples Ventas */
-	@JsonIgnore
+	/*@JsonIgnore
 	@OneToMany(mappedBy = "productoId") // La propiedad "productoId" en VentaEntidad
-    private List<VentaEntity> listaVentas;
+    private List<VentaEntity> listaVentas; */
+
+	@JsonBackReference
+	@ManyToMany(mappedBy = "listaProductos")
+	private List<VentaEntity> listaVentas;
 
 // ------------------------------------------------------- GETTERS/SETTERS --------------------------------------------------------------	
 	public Long getProductoId() {
@@ -109,5 +115,12 @@ public class ProductoEntity {
 	public void setDeAlta(boolean deAlta) {
 		this.deAlta = deAlta;
 	}
-	
+
+	public List<VentaEntity> getListaVentas() {
+		return listaVentas;
+	}
+
+	public void setListaVentas(List<VentaEntity> listaVentas) {
+		this.listaVentas = listaVentas;
+	}
 }

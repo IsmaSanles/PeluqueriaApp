@@ -27,10 +27,16 @@ function listarVentas() {
         	// Limpia el cuerpo de la tabla
             $('#tbodyVentas').empty();
 
-        	//console.log(data);
             let content = ``;
             data.forEach(function (venta) {
-				//console.log(venta); // log
+                // Crea una variable para almacenar los productos de esta venta
+                let productosHtml = '';
+                // Itera sobre la lista de productos de esta venta
+                venta.listaProductos.forEach(function(producto) {
+                    // Agrega cada producto como una fila en la celda
+                    productosHtml += `<span>${producto.nombre}</span><br>`;
+                });
+                // Construye la fila de la tabla con los datos de la venta
                 content += `
                 <tr>
                     <td>${formatoFecha(venta.fechaVenta)}</td>
@@ -38,10 +44,17 @@ function listarVentas() {
                     <td>${venta.clienteId.nombre}</td>
                     <td>${venta.clienteId.apellido1}</td>
                     <td>${venta.clienteId.dni}</td>
-                    <td>${venta.productoId.nombre}</td>
-                    <td>${venta.udsVendidas}</td>
-                    <td>${venta.productoId.precio}</td>
-                    <td>${calcularPrecioTotal(venta.udsVendidas, venta.productoId.precio)}</td>
+                    <td>${productosHtml}</td> <!-- Aquí se insertan los productos -->
+                    <td>
+                        <ul style="list-style-type: none; padding: 0; margin: 0;">`;
+                            // Itera sobre la lista de productos de esta venta para mostrar los precios individuales
+                            venta.listaProductos.forEach(function(producto) {
+                                content += `<li>${venta.udsVendidas} x ${producto.precio}</li>`;
+                            });
+                            content += `
+                        </ul>
+                    </td>
+                    <td>${calcularPrecioTotal(venta.udsVendidas, venta.listaProductos[0].precio)}</td>
                     <td class="d-flex">
                         <button class="btn btn-primary mr-2 editarVentaBtn" data-estilista-id="${venta.ventaId}">
                             <i class="bi bi-pencil-square"></i>

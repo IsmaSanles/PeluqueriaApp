@@ -1,6 +1,9 @@
 package com.Proyect.PeluqueriaApp.Entities;
 
 import java.util.Date;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -31,11 +34,19 @@ public class VentaEntity {
 	private ClienteEntity clienteId;
 	
 	/* cada Venta tendrá un solo Producto */
-	@ManyToOne
+	/*@ManyToOne
 	@NotNull// utilizamos NotNull para valores numéricos
 	@JsonIgnoreProperties({"ventas"}) // Evitar bucle infinito al serializar ProductoEntity
     @JoinColumn(name = "productoId", nullable = false)
-	private ProductoEntity productoId;
+	private ProductoEntity productoId;*/
+
+
+	@ManyToMany
+	@JsonIgnoreProperties({"listaVentas"}) // Evitar bucle infinito al serializar ProductoEntity
+	@JoinTable(name = "venta_producto",
+			joinColumns = @JoinColumn(name = "ventaId"),
+			inverseJoinColumns = @JoinColumn(name = "productoId"))
+	private List<ProductoEntity> listaProductos;
 
 // ------------------------------------------------------- GETTERS/SETTERS --------------------------------------------------------------	
 	public Long getVentaId() {
@@ -70,11 +81,11 @@ public class VentaEntity {
 		this.clienteId = clienteId;
 	}
 
-	public ProductoEntity getProductoId() {
-		return productoId;
+	public List<ProductoEntity> getListaProductos() {
+		return listaProductos;
 	}
 
-	public void setProductoId(ProductoEntity productoId) {
-		this.productoId = productoId;
+	public void setListaProductos(List<ProductoEntity> listaProductos) {
+		this.listaProductos = listaProductos;
 	}
 }

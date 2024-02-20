@@ -19,8 +19,20 @@ public class VentaController {
 	
 	@Autowired
 	private VentaService ventaService;
-	
+
 	@GetMapping
+	public ResponseEntity<?> listarVentas() {
+
+		List<VentaEntity> listadoVentas = ventaService.getAllVentasConDetalles();
+
+		if (listadoVentas.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		} else {
+			return ResponseEntity.status(HttpStatus.OK).body(listadoVentas);
+		}
+	}
+
+	/*@GetMapping
 	public ResponseEntity<?> listarVentas() {
 		
 		List<VentaEntity> listadoVentas = ventaService.getAllVentasConDetalles();
@@ -31,6 +43,8 @@ public class VentaController {
 			return ResponseEntity.status(HttpStatus.OK).body(listadoVentas);
 		}
 	}
+	*/
+
 	/*
 	@GetMapping("/{id}")
 	public EstilistaEntity obtenerEstilistaPorId(@PathVariable Long id) {
