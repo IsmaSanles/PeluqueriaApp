@@ -3,7 +3,6 @@ package com.Proyect.PeluqueriaApp.Entities;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -28,7 +27,7 @@ public class ProductoEntity {
 	@NotNull
 	@Column(name="precio", nullable = false)
 	private BigDecimal precio;
-	
+
 	@Column(name="stock")
 	private int stock;
 	

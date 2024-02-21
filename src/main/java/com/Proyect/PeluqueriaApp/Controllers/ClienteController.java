@@ -33,6 +33,18 @@ public class ClienteController {
 			return ResponseEntity.status(HttpStatus.OK).body(listadoClientes);
 		}
 	}
+
+	@GetMapping("/deAlta")
+	public ResponseEntity<?> listarClientesDeAlta() {
+
+		List<ClienteEntity> listarClientesDeAlta = this.clienteService.listarClientesDeAlta();
+
+		if (listarClientesDeAlta.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		} else {
+			return ResponseEntity.status(HttpStatus.OK).body(listarClientesDeAlta);
+		}
+	}
 	
 	@GetMapping("/{id}")
 	public ClienteEntity obtenerClientePorId(@PathVariable Long id) {

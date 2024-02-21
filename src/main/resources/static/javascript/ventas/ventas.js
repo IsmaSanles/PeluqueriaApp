@@ -54,7 +54,7 @@ function listarVentas() {
                             content += `
                         </ul>
                     </td>
-                    <td>${calcularPrecioTotal(venta.udsVendidas, venta.listaProductos[0].precio)}</td>
+                    <td>TOTAL</td>
                     <td class="d-flex">
                         <button class="btn btn-primary mr-2 editarVentaBtn" data-estilista-id="${venta.ventaId}">
                             <i class="bi bi-pencil-square"></i>
@@ -80,19 +80,19 @@ function listarVentas() {
 			// En caso de error, ocultar la tabla y mostrar el mensaje de fallo
             $("#tablaVentas").hide();
             $("#mensajeFallo").show();
-            toastr.error("Hubo un error al cargar la lista de Ventas");
+            toastr.error("Hubo un error al cargar las Ventas");
         }
     });
 };
 
-// crear Nuevo Venta
+// crear Nueva Venta
 function crearVenta(){
     // recuperamos los datos para enviar al back
     let udsVendidas = $("#udsVendidasCrear").val();
     let clienteId = $("#clienteCrear").val();
     let productoId = $("#productoCrear").val();
 
-    //console.log(nombre, apellido1 ,apellido2, dni, telefono, email, fechaNacimiento);
+    console.log('udsVendidas: ' + udsVendidas, 'clienteId: ' + clienteId, 'productoId: ' + productoId);
 
     // ejecucion de peticion ajax para la conexión con el backend
     $.ajax({
@@ -106,14 +106,12 @@ function crearVenta(){
             productoId
         }),
         success: function (data) {
-            //console.log(data);
-
             // Quitar clases de error y mensajes de error al tener éxito
             $(".is-invalid").removeClass("is-invalid"); // Quitar clases de error de todos los campos
             $(".invalid-tooltip").remove(); // Quitar todos los mensajes de error
 
             // Mostrar mensaje de éxito con Toastr
-            toastr.success("Nueva venta añadida con éxito");
+            toastr.success("Venta añadida con éxito");
 
             // Recargar la página después de 1 segundo
             setTimeout(function() {
@@ -156,7 +154,6 @@ function crearVenta(){
     });
 };
 
-
 //Método para mostrar la fecha 'dd-MM-yyyy'
 function formatoFecha(fecha) {
     // Convierte la cadena de fecha a un objeto Date
@@ -186,9 +183,4 @@ function formatoHora(fecha) {
     const formattedTime = `${horas < 10 ? '0' : ''}${horas}:${minutos < 10 ? '0' : ''}${minutos}`;
 
     return formattedTime;
-}
-
-// Calcula el precio
-function calcularPrecioTotal(udsVendidas, precio) {
-    return udsVendidas * precio;
 }

@@ -72,55 +72,47 @@
                     </div>
                     <!-- modal-body -->
                     <div class="modal-body">
-
                         <form class="needs-validation" novalidate>
+
                             <div class="form-row">
-
-                                <div class="col-md-4 mb-3">
-                                    <label for="nombre">Nombre *</label>
-                                    <input type="text" class="form-control" id="nombreCrear" placeholder="Nombre"  required>
-                                </div>
-
-                                <div class="col-md-4 mb-3">
-                                    <label for="apellido1">1º Apellido *</label>
-                                    <input type="text" class="form-control" id="apellido1Crear" placeholder="1º Apellido" required>
-                                </div>
-
-                                <div class="col-md-4 mb-3">
-                                    <label for="apellido2">2º Apellido</label>
-                                    <input type="text" class="form-control" id="apellido2Crear" placeholder="2º Apellido">
+                                <div class="form-group col-md-6">
+                                    <label for="cliente">Cliente *</label>
+                                    <select class="form-control" id="cliente" required>
+                                        <option selected disabled value="">Selecciona el cliente</option>
+                                        <!-- Opciones de clientes -->
+                                        <option value="1">Cliente 1</option>
+                                        <option value="2">Cliente 2</option>
+                                        <option value="3">Cliente 3</option>
+                                        <!-- Agrega más opciones según sea necesario -->
+                                    </select>
+                                    <div class="invalid-feedback">Por favor selecciona un cliente.</div>
                                 </div>
                             </div>
 
+                            <!-- Segundo select para seleccionar producto -->
                             <div class="form-row">
-                                <div class="col-md-4 mb-3">
-                                    <label for="nombre">DNI *</label>
-                                    <input type="text" class="form-control" id="dniCrear" placeholder="55443322R"  required>
+                                <div class="form-group col-md-6">
+                                    <label for="producto">Producto *</label>
+                                    <select class="form-control" id="producto" required>
+                                        <option selected disabled value="">Selecciona el producto</option>
+                                        <!-- Opciones de productos -->
+                                        <option value="1">Producto 1</option>
+                                        <option value="2">Producto 2</option>
+                                        <option value="3">Producto 3</option>
+                                        <!-- Agrega más opciones según sea necesario -->
+                                    </select>
+                                    <div class="invalid-feedback">Por favor selecciona un producto.</div>
                                 </div>
-
-                                <div class="col-md-4 mb-3">
-                                    <label for="telefono">Teléfono</label>
-                                    <input type="text" class="form-control" id="telefonoCrear" placeholder="Ingrese número de teléfono">
-                                </div>
-
-                                <div class="col-md-4 mb-3">
-                                    <label for="email">Email *</label>
-                                    <input type="email" class="form-control" id="emailCrear" placeholder="ejemplo@mail.com"  required>
+                                <div class="form-group col-md-2">
+                                    <label for="cantidad">Cantidad *</label>
+                                    <input type="number" class="form-control" id="cantidad" required>
+                                    <div class="invalid-feedback">Por favor ingresa la cantidad.</div>
                                 </div>
                             </div>
-
-                            <div class="form-row">
-                                <div class="col-md-4 mb-3">
-                                    <label for="fechaNacimiento">Fecha de Nacimiento *</label>
-                                    <input type="text" class="form-control" id="fechaNacimientoCrear" required>
-                                </div>
-                            </div>
-
 
                             <div class="form-row">
                                 <p>Los campos con (*) son obligatorios.</p>
                             </div>
-
                         </form>
                     </div>
                     <div class="modal-footer">

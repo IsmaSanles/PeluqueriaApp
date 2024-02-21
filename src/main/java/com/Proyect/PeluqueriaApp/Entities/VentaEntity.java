@@ -43,7 +43,7 @@ public class VentaEntity {
 
 	@ManyToMany
 	@JsonIgnoreProperties({"listaVentas"}) // Evitar bucle infinito al serializar ProductoEntity
-	@JoinTable(name = "venta_producto",
+	@JoinTable(name = "Venta_Producto",
 			joinColumns = @JoinColumn(name = "ventaId"),
 			inverseJoinColumns = @JoinColumn(name = "productoId"))
 	private List<ProductoEntity> listaProductos;
