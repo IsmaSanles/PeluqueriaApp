@@ -65,7 +65,7 @@ function listarEstilistas() {
 			    ...dataTableOptions,
 			    columnDefs: [
 			        { className: "text-center", targets: "_all" }, // centramos todos los textos de las columnas
-			        { targets: [4, 5, 6, 7, 8], orderable: false } // indicamos que las columnas definidas no puedan filtrar
+			        { orderable: false, targets: "_all" } // Deshabilita el filtrado para todas las columnas
 			    ]
 			});
             

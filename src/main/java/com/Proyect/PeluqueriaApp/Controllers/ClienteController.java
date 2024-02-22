@@ -3,7 +3,6 @@ package com.Proyect.PeluqueriaApp.Controllers;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
 import com.Proyect.PeluqueriaApp.Entities.EstilistaEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -19,20 +19,20 @@
 
     </head>
 
-    <body style="background: #e8e2d9; height: 300px;">
+    <body style="height: auto;">
 
         <header>
             <!-- Aquí se carga el header mediante un archivo javascript -->
         </header>
 
-        <div class="container">
+        <div class="container-fluid">
             <div class="container my-4">
-                <h1 class="text-center font-weight-bold">Listado de Ventas</h1>
+                <h1 class="text-center font-weight-bold"><i class="bi bi-cart-fill"></i> Gestión de Ventas</h1>
             </div>
             <hr>
 
             <div class="container my-4">
-                <button type="button" id="crearNuevaVenta" class="btn btn-primary btn-lg">Nueva Venta</button>
+                <button type="button" id="crearNuevaVenta" class="btn btn-primary btn-lg"><i class="bi bi-cart-plus"></i> Nueva Venta</button>
             </div>
 
             <div class="container my-4">
@@ -77,15 +77,9 @@
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label for="cliente">Cliente *</label>
-                                    <select class="form-control" id="cliente" required>
-                                        <option selected disabled value="">Selecciona el cliente</option>
-                                        <!-- Opciones de clientes -->
-                                        <option value="1">Cliente 1</option>
-                                        <option value="2">Cliente 2</option>
-                                        <option value="3">Cliente 3</option>
+                                    <select class="form-control selectClientes" id="selectClientes" required>
                                         <!-- Agrega más opciones según sea necesario -->
                                     </select>
-                                    <div class="invalid-feedback">Por favor selecciona un cliente.</div>
                                 </div>
                             </div>
 
@@ -93,20 +87,13 @@
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label for="producto">Producto *</label>
-                                    <select class="form-control" id="producto" required>
-                                        <option selected disabled value="">Selecciona el producto</option>
-                                        <!-- Opciones de productos -->
-                                        <option value="1">Producto 1</option>
-                                        <option value="2">Producto 2</option>
-                                        <option value="3">Producto 3</option>
+                                    <select class="form-control selectProductos" id="selectProductos" required>
                                         <!-- Agrega más opciones según sea necesario -->
                                     </select>
-                                    <div class="invalid-feedback">Por favor selecciona un producto.</div>
                                 </div>
                                 <div class="form-group col-md-2">
                                     <label for="cantidad">Cantidad *</label>
-                                    <input type="number" class="form-control" id="cantidad" required>
-                                    <div class="invalid-feedback">Por favor ingresa la cantidad.</div>
+                                    <input type="number" class="form-control" id="cantidad" min="1" required>
                                 </div>
                             </div>
 

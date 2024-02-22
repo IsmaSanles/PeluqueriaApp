@@ -3,7 +3,7 @@ const footer = $("footer");
 
 // código para el menú de navegación
 header.html( `
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333;">
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333; padding-bottom:15px; padding-top:15px; font-family: Verdana; font-size:18px;">
     <div class="container">
         <a class="navbar-brand" href="#">Peluquería Zitane</a>
         
@@ -20,7 +20,7 @@ header.html( `
 			        <a class="nav-link" href="../index/index.html" data-view="index.html">Inicio</a>
 			    </li>
 			    <li class="nav-item">
-			        <a class="nav-link" href="../clientes/clientes.html" data-view="clientes.html">Cliente</a>
+			        <a class="nav-link" href="../clientes/clientes.html" data-view="clientes.html">Clientes</a>
 			    </li>
 			    <li class="nav-item">
 			        <a class="nav-link" href="../estilistas/estilistas.html" data-view="estilistas.html">Empleados</a>
@@ -45,12 +45,12 @@ header.html( `
 
 // código para el footer
 footer.html(`
-<footer class="d-flex flex-wrap justify-content-between align-items-center py-3 border-top bg-dark text-white">
+<footer class="d-flex flex-wrap justify-content-between align-items-center py-3 border-top bg-dark text-white"  style="padding-bottom:15px; padding-top:15px; font-family: Verdana; font-size:18px;">
 	 <div class="col-md-4 d-flex align-items-center">
 		<a href="/" class="mb-3 me-2 mb-md-0 text-white text-decoration-none lh-1">
 	  		<svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
 		</a>
-		<span class="mb-3 mb-md-0">© 2022 Company, Inc</span>
+		<span class="mb-3 mb-md-0">© 2024 Company, Inc</span>
 	 </div>
 	
 	 <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">

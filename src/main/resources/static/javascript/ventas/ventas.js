@@ -6,14 +6,17 @@ $(document).ready(function () {
 });
 
 function abrirModalCrear() {
-	// Manejador de clic para el botón "Crear Nueva Venta"
     $('#crearNuevaVenta').on('click', function () {
         $('#modalCrearVenta').modal('show');
 
-	    // creamos un escuchador al botón crear del modal de Crear Venta
-	    $("#btnCrear").on("click", function() {
-	        crearVenta();
-	    });
+        // Cargar clientes y productos al abrir el modal de crear venta
+        cargarClientes();
+        cargarProductos();
+
+        // creamos un escuchador al botón crear del modal de Crear Venta
+        $("#btnCrear").on("click", function() {
+            crearVenta();
+        });
     });
 }
 
@@ -71,7 +74,8 @@ function listarVentas() {
 			$("#tablaVentas").DataTable({
 			    ...dataTableOptions,
 			    columnDefs: [
-			        { className: "text-center", targets: "_all" , orderable: false}, // centramos todos los textos de las columnas
+			        { className: "text-center", targets: "_all"}, // centramos todos los textos de las columnas
+			        { orderable: false, targets: "_all" } // Deshabilita el filtrado para todas las columnas
 			    ]
 			});
 
@@ -86,22 +90,41 @@ function listarVentas() {
 };
 
 // crear Nueva Venta
-function crearVenta(){
-    // recuperamos los datos para enviar al back
-    let udsVendidas = $("#udsVendidasCrear").val();
-    let clienteId = $("#clienteCrear").val();
-    let productoId = $("#productoCrear").val();
+function crearVenta() {
+    // Recuperamos los datos para enviar al backend
+    let cantidad = $("#cantidad").val();
+    let clienteId = $("#selectClientes").val();
+    let productoId = $("#selectProductos").val();
+    console.log('cantidad: ' + cantidad, 'clienteId: ' + clienteId, 'productoId: ' + productoId);
 
-    console.log('udsVendidas: ' + udsVendidas, 'clienteId: ' + clienteId, 'productoId: ' + productoId);
+    // Limpiamos los mensajes de error
+    $(".is-invalid").removeClass("is-invalid"); // Quitar clases de error de todos los campos
+    $(".invalid-tooltip").remove(); // Quitar todos los mensajes de error
 
-    // ejecucion de peticion ajax para la conexión con el backend
+    // Comprobamos si clienteId, productoId o cantidad están vacíos
+    if (!clienteId.trim()) {
+        $("#selectClientes").after("<div class='invalid-feedback'>Este es un campo obligatorio</div>"); // Muestra mensaje de error debajo del campo
+    }
+    if (!productoId.trim()) {
+        $("#selectProductos").after("<div class='invalid-feedback'>Este es un campo obligatorio</div>"); // Muestra mensaje de error debajo del campo
+    }
+    if (!cantidad.val()) {
+        $("#cantidad").after("<div class='invalid-feedback'>Este es un campo obligatorio</div>"); // Muestra mensaje de error debajo del campo
+    }
+
+    .css("border-width", "2px"); // Añadir estilo para aumentar el grosor del borde
+    .addClass("is-invalid"); // Agregar clase de Bootstrap para campo inválido
+    .next(".valid-tooltip").remove(); // Eliminar cualquier mensaje de validación anterior
+    .next(".invalid-tooltip").remove(); // Eliminar cualquier mensaje de error anterior
+
+    // Ejecución de petición AJAX para la conexión con el backend
     $.ajax({
         url: "http://localhost:8001/ventas/crear",
         method: "POST",
         dataType: "json",
         contentType: "application/json",
         data: JSON.stringify({
-            udsVendidas,
+            cantidad,
             clienteId,
             productoId
         }),
@@ -114,45 +137,16 @@ function crearVenta(){
             toastr.success("Venta añadida con éxito");
 
             // Recargar la página después de 1 segundo
-            setTimeout(function() {
+            setTimeout(function () {
                 location.reload();
             }, 1000);
         },
         error: function (xhr, status, error) {
-		    //console.log(xhr.responseJSON); // Para depurar, verifica la estructura del objeto de error
-
-		    // Manejar los mensajes de error devueltos por el backend
-		    if (xhr.responseJSON) {
-		        // Limpiar campos y mensajes de error antes de procesar los errores
-                $(".is-invalid").removeClass("is-invalid").css("border-width", ""); // Quitar clases de error y estilo personalizado de todos los campos
-                $(".invalid-tooltip").remove(); // Quitar todos los mensajes de error
-
-                xhr.responseJSON.forEach(error => {
-                    // Obtener el nombre del campo y el mensaje de error
-                    let fieldName = error.field;
-                    let errorMessage = error.defaultMessage;
-
-                    // Resaltar el campo con error y mostrar el mensaje de error utilizando las clases de Bootstrap
-                    let inputField = $("#" + fieldName + "Crear"); // Sabiendo que los ids de los inputs siguen el formato "{nombreCampo}Crear"
-
-                    inputField.css("border-width", "2px"); // Añadir estilo para aumentar el grosor del borde
-                    inputField.addClass("is-invalid"); // Agregar clase de Bootstrap para campo inválido
-                    inputField.next(".valid-tooltip").remove(); // Eliminar cualquier mensaje de validación anterior
-                    inputField.next(".invalid-tooltip").remove(); // Eliminar cualquier mensaje de error anterior
-
-                    // Si el campo está vacío, agregar mensaje predeterminado de campo obligatorio
-                    if (!inputField.val().trim()) {
-                        errorMessage = "Este es un campo obligatorio";
-                    }
-
-                    inputField.after("<div class='invalid-tooltip'>" + errorMessage + "</div>"); // Mostrar mensaje de error
-                });
-            } else {
-                toastr.error('Ha ocurrido un error al intentar crear la venta');
-            }
-		}
+            toastr.error('Ha ocurrido un error al intentar crear la venta');
+        }
     });
 };
+
 
 //Método para mostrar la fecha 'dd-MM-yyyy'
 function formatoFecha(fecha) {
@@ -183,4 +177,53 @@ function formatoHora(fecha) {
     const formattedTime = `${horas < 10 ? '0' : ''}${horas}:${minutos < 10 ? '0' : ''}${minutos}`;
 
     return formattedTime;
+}
+
+// Función para cargar los clientes desde el backend
+function cargarClientes() {
+    $.ajax({
+        url: "http://localhost:8001/cliente/deAlta",
+        method: "GET",
+        dataType: "json",
+        success: function (data) {
+
+            // Limpiar las opciones existentes en el selector de clientes
+            $('#selectClientes').empty();
+            // Añadimos una opción para indicar al usuario que seleccione una option
+            $('#selectClientes').append(`<option selected disabled value="">Selecciona el cliente</option>`);
+            // Agregar las opciones de clientes al selector correspondiente
+            data.forEach(function (cliente) {
+                let fullName = `${cliente.nombre} ${cliente.apellido1}`;
+                if (cliente.apellido2) {
+                    fullName += ` ${cliente.apellido2}`;
+                }
+                $('#selectClientes').append(`<option value="${cliente.clienteId}">${cliente.dni} - ${fullName}</option>`);
+            });
+        },
+        error: function (error) {
+            console.error("Error al cargar los clientes:", error);
+        }
+    });
+}
+
+function cargarProductos() {
+    $.ajax({
+        url: "http://localhost:8001/producto/deAlta",
+        method: "GET",
+        dataType: "json",
+        success: function (data) {
+
+            // Limpiar las opciones existentes en el selector de productos
+            $('#selectProductos').empty();
+            // Añadimos una opción para indicar al usuario que seleccione una option
+            $('#selectProductos').append(`<option selected disabled value="">Selecciona el producto</option>`);
+            // Agregar las opciones de productos al selector correspondiente
+            data.forEach(function (producto) {
+                $('#selectProductos').append(`<option value="${producto.productoId}">${producto.nombre}</option>`);
+            });
+        },
+        error: function (error) {
+            console.error("Error al cargar los productos:", error);
+        }
+    });
 }

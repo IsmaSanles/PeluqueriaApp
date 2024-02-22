@@ -66,7 +66,7 @@ function listarClientes() {
 				...dataTableOptions, 
 	            columnDefs: [
 					{ className: "text-center", targets: "_all" }, // centramos todos los textos de las columnas
-			        { targets: [4, 5, 6, 7, 8, 9], orderable: false } // indicamos que las columnas definidas no puedan filtrar
+			        { orderable: false, targets: "_all" } // Deshabilita el filtrado para todas las columnas
 		    	]
 		    });
             
@@ -176,7 +176,7 @@ function crearCliente(){
         success: function (data) {
             //console.log(data);
 
-             // Quitar clases de error y mensajes de error al tener éxito
+            // Quitar clases de error y mensajes de error al tener éxito
             $(".is-invalid").removeClass("is-invalid"); // Quitar clases de error de todos los campos
             $(".invalid-tooltip").remove(); // Quitar todos los mensajes de error
             
