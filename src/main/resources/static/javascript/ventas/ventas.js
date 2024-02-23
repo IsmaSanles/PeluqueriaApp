@@ -52,7 +52,7 @@ function listarVentas() {
                         <ul style="list-style-type: none; padding: 0; margin: 0;">`;
                             // Itera sobre la lista de productos de esta venta para mostrar los precios individuales
                             venta.listaProductos.forEach(function(producto) {
-                                content += `<li>${venta.udsVendidas} x ${producto.precio}</li>`;
+                                content += `<li>${producto.precio}</li>`;
                             });
                             content += `
                         </ul>
@@ -102,50 +102,121 @@ function crearVenta() {
     $(".invalid-tooltip").remove(); // Quitar todos los mensajes de error
 
     // Comprobamos si clienteId, productoId o cantidad están vacíos
-    if (!clienteId.trim()) {
-        $("#selectClientes").after("<div class='invalid-feedback'>Este es un campo obligatorio</div>"); // Muestra mensaje de error debajo del campo
-    }
-    if (!productoId.trim()) {
-        $("#selectProductos").after("<div class='invalid-feedback'>Este es un campo obligatorio</div>"); // Muestra mensaje de error debajo del campo
-    }
-    if (!cantidad.val()) {
-        $("#cantidad").after("<div class='invalid-feedback'>Este es un campo obligatorio</div>"); // Muestra mensaje de error debajo del campo
+    let errores = false;
+
+    if (!clienteId) {
+        $("#selectClientes").addClass("is-invalid");
+        $("#selectClientes").after('<div class="invalid-tooltip">Campo obligatorio</div>');
+        errores = true;
     }
 
-    .css("border-width", "2px"); // Añadir estilo para aumentar el grosor del borde
-    .addClass("is-invalid"); // Agregar clase de Bootstrap para campo inválido
-    .next(".valid-tooltip").remove(); // Eliminar cualquier mensaje de validación anterior
-    .next(".invalid-tooltip").remove(); // Eliminar cualquier mensaje de error anterior
+    if (!productoId) {
+        $("#selectProductos").addClass("is-invalid");
+        $("#selectProductos").after('<div class="invalid-tooltip">Campo obligatorio</div>');
+        errores = true;
+    }
 
-    // Ejecución de petición AJAX para la conexión con el backend
+    if (!cantidad) {
+        $("#cantidad").addClass("is-invalid");
+        $("#cantidad").after('<div class="invalid-tooltip">Campo obligatorio</div>');
+        errores = true;
+    }
+
+    if (errores) {
+        // Mostrar un mensaje general de error usando Bootstrap
+        $("#mensajeError").html('<div class="alert alert-danger" role="alert">Por favor, complete todos los campos obligatorios.</div>');
+    } else {
+
+        // Ejecución de petición AJAX para la conexión con el backend
+        $.ajax({
+            url: "http://localhost:8001/ventas/crear",
+            method: "POST",
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify({
+                cantidad,
+                clienteId,
+                productoId
+            }),
+            success: function (data) {
+
+                // Mostrar mensaje de éxito con Toastr
+                toastr.success("Venta añadida con éxito");
+
+                // Recargar la página después de 1 segundo
+                setTimeout(function () {
+                    location.reload();
+                }, 1000);
+            },
+            error: function (xhr, status, error) {
+                toastr.error('Ha ocurrido un error al intentar crear la venta');
+            }
+        });
+    }
+};
+
+// Función para cargar los clientes desde el backend
+function cargarClientes() {
     $.ajax({
-        url: "http://localhost:8001/ventas/crear",
-        method: "POST",
+        url: "http://localhost:8001/cliente/deAlta",
+        method: "GET",
         dataType: "json",
-        contentType: "application/json",
-        data: JSON.stringify({
-            cantidad,
-            clienteId,
-            productoId
-        }),
         success: function (data) {
-            // Quitar clases de error y mensajes de error al tener éxito
-            $(".is-invalid").removeClass("is-invalid"); // Quitar clases de error de todos los campos
-            $(".invalid-tooltip").remove(); // Quitar todos los mensajes de error
 
-            // Mostrar mensaje de éxito con Toastr
-            toastr.success("Venta añadida con éxito");
+            // Limpiar las opciones existentes en el selector de clientes
+            $('#selectClientes').empty();
+            // Añadimos una opción para indicar al usuario que seleccione una option
+            $('#selectClientes').append(`<option selected disabled value="">Selecciona el cliente</option>`);
+            // Agregar las opciones de clientes al selector correspondiente
+            data.forEach(function (cliente) {
+                let fullName = `${cliente.nombre} ${cliente.apellido1}`;
+                if (cliente.apellido2) {
+                    fullName += ` ${cliente.apellido2}`;
+                }
+                $('#selectClientes').append(`<option value="${cliente.clienteId}">${cliente.dni} - ${fullName}</option>`);
+            });
 
-            // Recargar la página después de 1 segundo
-            setTimeout(function () {
-                location.reload();
-            }, 1000);
+            // Aplicar Select2 al selector de clientes
+            $('#selectClientes').select2({
+                dropdownParent: $('#modalCrearVenta'),
+                width: '100%',
+                height: '10px'
+            });
         },
-        error: function (xhr, status, error) {
-            toastr.error('Ha ocurrido un error al intentar crear la venta');
+        error: function (error) {
+            console.error("Error al cargar los clientes:", error);
         }
     });
-};
+}
+
+function cargarProductos() {
+    $.ajax({
+        url: "http://localhost:8001/producto/deAlta",
+        method: "GET",
+        dataType: "json",
+        success: function (data) {
+
+            // Limpiar las opciones existentes en el selector de productos
+            $('#selectProductos').empty();
+            // Añadimos una opción para indicar al usuario que seleccione una option
+            $('#selectProductos').append(`<option selected disabled value="">Selecciona el producto</option>`);
+            // Agregar las opciones de productos al selector correspondiente
+            data.forEach(function (producto) {
+                $('#selectProductos').append(`<option value="${producto.productoId}">${producto.nombre}</option>`);
+            });
+
+            // Aplicar Select2 al selector de productos
+            $('#selectProductos').select2({
+                dropdownParent: $('#modalCrearVenta'),
+                width: '100%',
+                height: '100%'
+            });
+        },
+        error: function (error) {
+            console.error("Error al cargar los productos:", error);
+        }
+    });
+}
 
 
 //Método para mostrar la fecha 'dd-MM-yyyy'
@@ -177,53 +248,4 @@ function formatoHora(fecha) {
     const formattedTime = `${horas < 10 ? '0' : ''}${horas}:${minutos < 10 ? '0' : ''}${minutos}`;
 
     return formattedTime;
-}
-
-// Función para cargar los clientes desde el backend
-function cargarClientes() {
-    $.ajax({
-        url: "http://localhost:8001/cliente/deAlta",
-        method: "GET",
-        dataType: "json",
-        success: function (data) {
-
-            // Limpiar las opciones existentes en el selector de clientes
-            $('#selectClientes').empty();
-            // Añadimos una opción para indicar al usuario que seleccione una option
-            $('#selectClientes').append(`<option selected disabled value="">Selecciona el cliente</option>`);
-            // Agregar las opciones de clientes al selector correspondiente
-            data.forEach(function (cliente) {
-                let fullName = `${cliente.nombre} ${cliente.apellido1}`;
-                if (cliente.apellido2) {
-                    fullName += ` ${cliente.apellido2}`;
-                }
-                $('#selectClientes').append(`<option value="${cliente.clienteId}">${cliente.dni} - ${fullName}</option>`);
-            });
-        },
-        error: function (error) {
-            console.error("Error al cargar los clientes:", error);
-        }
-    });
-}
-
-function cargarProductos() {
-    $.ajax({
-        url: "http://localhost:8001/producto/deAlta",
-        method: "GET",
-        dataType: "json",
-        success: function (data) {
-
-            // Limpiar las opciones existentes en el selector de productos
-            $('#selectProductos').empty();
-            // Añadimos una opción para indicar al usuario que seleccione una option
-            $('#selectProductos').append(`<option selected disabled value="">Selecciona el producto</option>`);
-            // Agregar las opciones de productos al selector correspondiente
-            data.forEach(function (producto) {
-                $('#selectProductos').append(`<option value="${producto.productoId}">${producto.nombre}</option>`);
-            });
-        },
-        error: function (error) {
-            console.error("Error al cargar los productos:", error);
-        }
-    });
 }

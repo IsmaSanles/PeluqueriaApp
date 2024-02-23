@@ -2,7 +2,6 @@ package com.Proyect.PeluqueriaApp.Entities;
 
 import java.util.Date;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -19,10 +18,6 @@ public class VentaEntity {
 	
 	@Column(name="fechaVenta", nullable = false)
 	private Date fechaVenta;
-	
-	@NotNull
-	@Column(name="udsVendidas", nullable = false)
-	private int udsVendidas;
 
 	
 // ------------------------------------------------------- RELACIONES --------------------------------------------------------------		
@@ -32,14 +27,6 @@ public class VentaEntity {
 	@JsonIgnoreProperties({"ventas"}) // Evitar bucle infinito al serializar ClienteEntity
     @JoinColumn(name = "clienteId", nullable = false)
 	private ClienteEntity clienteId;
-	
-	/* cada Venta tendrá un solo Producto */
-	/*@ManyToOne
-	@NotNull// utilizamos NotNull para valores numéricos
-	@JsonIgnoreProperties({"ventas"}) // Evitar bucle infinito al serializar ProductoEntity
-    @JoinColumn(name = "productoId", nullable = false)
-	private ProductoEntity productoId;*/
-
 
 	@ManyToMany
 	@JsonIgnoreProperties({"listaVentas"}) // Evitar bucle infinito al serializar ProductoEntity
@@ -63,14 +50,6 @@ public class VentaEntity {
 
 	public void setFechaVenta(Date fechaVenta) {
 		this.fechaVenta = fechaVenta;
-	}
-
-	public int getUdsVendidas() {
-		return udsVendidas;
-	}
-
-	public void setUdsVendidas(int udsVendidas) {
-		this.udsVendidas = udsVendidas;
 	}
 
 	public ClienteEntity getClienteId() {

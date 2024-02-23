@@ -16,6 +16,8 @@
         <link rel="stylesheet" href="../../static/recursosApp/icons-main/font/bootstrap-icons.min.css">
         <!-- Toastr CSS -->
         <link rel="stylesheet" href="../../static/recursosApp/toastr.min.css">
+        <!-- Select2 CSS -->
+        <link rel="stylesheet" href="../../static/recursosApp/select2.min.css">
 
     </head>
 
@@ -70,12 +72,14 @@
                     <div class="modal-header">
                         <h5 class="modal-title">Nueva Venta</h5>
                     </div>
+
                     <!-- modal-body -->
                     <div class="modal-body">
                         <form class="needs-validation" novalidate>
 
+                            <!-- Primer select para seleccionar cliente -->
                             <div class="form-row">
-                                <div class="form-group col-md-6">
+                                <div class="form-group col-md-6 position-relative">
                                     <label for="cliente">Cliente *</label>
                                     <select class="form-control selectClientes" id="selectClientes" required>
                                         <!-- Agrega más opciones según sea necesario -->
@@ -85,15 +89,15 @@
 
                             <!-- Segundo select para seleccionar producto -->
                             <div class="form-row">
-                                <div class="form-group col-md-6">
+                                <div class="form-group col-md-6 position-relative">
                                     <label for="producto">Producto *</label>
                                     <select class="form-control selectProductos" id="selectProductos" required>
                                         <!-- Agrega más opciones según sea necesario -->
                                     </select>
                                 </div>
-                                <div class="form-group col-md-2">
+                                <div class="form-group col-md-2 position-relative">
                                     <label for="cantidad">Cantidad *</label>
-                                    <input type="number" class="form-control" id="cantidad" min="1" required>
+                                    <input type="number" class="form-control" id="cantidad" min="1" style="height:30px" required>
                                 </div>
                             </div>
 
@@ -190,6 +194,8 @@
         <script src="../../static/recursosApp/jquery-ui.js"></script>
         <!-- Toastr JS -->
         <script src="../../static/recursosApp/toastr.min.js"></script>
+        <!-- Select2 JS -->
+        <script src="../../static/recursosApp/select2.min.js"></script>
 
 
         <!-- Archivos JavaScript opciones de DataTable -->
