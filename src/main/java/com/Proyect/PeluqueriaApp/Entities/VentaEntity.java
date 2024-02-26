@@ -20,25 +20,10 @@ public class VentaEntity {
 	private Date fechaVenta;
 
 	
-// ------------------------------------------------------- RELACIONES --------------------------------------------------------------		
-	/* cada Venta tendrá un solo Cliente */
-	/*@ManyToOne
-	@NotNull// utilizamos NotNull para valores numéricos
-	@JsonIgnoreProperties({"ventas"}) // Evitar bucle infinito al serializar ClienteEntity
-    @JoinColumn(name = "clienteId", nullable = false)
-	private ClienteEntity cliente;
-
-	@ManyToMany
-	@JsonIgnoreProperties({"listaVentas"}) // Evitar bucle infinito al serializar ProductoEntity
-	@JoinTable(name = "Venta_Producto",
-			joinColumns = @JoinColumn(name = "ventaId"),
-			inverseJoinColumns = @JoinColumn(name = "productoId"))
-	private List<ProductoEntity> listaProductos;
-	*/
-
+// ------------------------------------------------------- RELACIONES --------------------------------------------------------------
 
 	@ManyToOne
-	@JoinColumn(name = "cliente_id") // Columna en la tabla Venta que referencia al cliente
+	@JoinColumn(name = "clienteId") // Columna en la tabla Venta que referencia al cliente
 	private ClienteEntity cliente;
 
 	@OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)

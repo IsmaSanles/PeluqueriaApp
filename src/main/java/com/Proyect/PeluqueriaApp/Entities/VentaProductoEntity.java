@@ -32,7 +32,7 @@ public class VentaProductoEntity {
 	@JoinColumn(name = "venta_id")
 	private VentaEntity venta;
 
-	@JsonIgnore
+	// NO AÑADIR JsonIgnore para que liste los datos del Producto
 	@ManyToOne
 	@JoinColumn(name = "producto_id")
 	private ProductoEntity producto;
