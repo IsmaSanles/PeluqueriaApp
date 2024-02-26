@@ -26,7 +26,7 @@ header.html( `
 			        <a class="nav-link" href="../estilistas/estilistas.html" data-view="estilistas.html">Empleados</a>
 			    </li>
 			    <li class="nav-item">
-			        <a class="nav-link" href="#" data-view="servicios.html">Servicios</a>
+			        <a class="nav-link" href="../servicios/servicios.html">Servicios</a>
 			    </li>
 			    <li class="nav-item">
                     <a class="nav-link" href="#" data-view="citas.html">Citas</a>

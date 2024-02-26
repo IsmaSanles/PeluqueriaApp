@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.NonNull;
 
 @Entity
 @Table(name = "Servicios")
@@ -25,17 +26,23 @@ public class ServicioEntity {
 	private BigDecimal precio;
 	
 	@NotNull
+  @Positive
 	@Column(name="duracion", nullable = false)
-	private int duracion;
+	private Integer duracion;
 	
 	@Column(name="descripcion")
 	private String descripcion;
+
+	@Column(name="deAlta")
+	private boolean deAlta = true;
 	
 	@Column(name="fechaCreacion", nullable = false)
 	private Date fechaCreacion;
-	
+
+
 	@Column(name="fechaModificacion")
 	private Date fechaModificacion;
+
 	
 // ------------------------------------------------------- RELACIONES --------------------------------------------------------------	
 	// Una cita SI puede tener varios servicios a la vez
@@ -99,6 +106,14 @@ public class ServicioEntity {
 
 	public void setFechaModificacion(Date fechaModificacion) {
 		this.fechaModificacion = fechaModificacion;
+	}
+
+	public boolean isDeAlta() {
+		return deAlta;
+	}
+
+	public void setDeAlta(boolean deAlta) {
+		this.deAlta = deAlta;
 	}
 
 	public List<CitaEntity> getListaCitas() {
