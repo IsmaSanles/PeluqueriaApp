@@ -1,8 +1,9 @@
 package com.Proyect.PeluqueriaApp.Entities;
 
 import java.util.Date;
-
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
@@ -17,26 +18,16 @@ public class VentaEntity {
 	
 	@Column(name="fechaVenta", nullable = false)
 	private Date fechaVenta;
+
 	
-	@NotNull(message = "Debes indicar el numero de unidades")
-	@Column(name="udsVendidas", nullable = false)
-	private int udsVendidas;
-	
-	
-// ------------------------------------------------------- RELACIONES --------------------------------------------------------------		
-	/* cada Venta tendrá un solo Cliente */
+// ------------------------------------------------------- RELACIONES --------------------------------------------------------------
+
 	@ManyToOne
-	@NotNull(message = "El cliente no puede ser nulo") // utilizamos NotNull para valores numéricos
-	@JsonIgnore
-    @JoinColumn(name = "clienteId", nullable = false)
-	private ClienteEntity clienteId;
-	
-	/* cada Venta tendrá un solo Producto */
-	@ManyToOne
-	@NotNull(message = "El producto no puede ser nulo") // utilizamos NotNull para valores numéricos
-	@JsonIgnore
-    @JoinColumn(name = "productoId", nullable = false)
-	private ProductoEntity productoId;
+	@JoinColumn(name = "clienteId") // Columna en la tabla Venta que referencia al cliente
+	private ClienteEntity cliente;
+
+	@OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
+	private List<VentaProductoEntity> productosVendidos;
 
 // ------------------------------------------------------- GETTERS/SETTERS --------------------------------------------------------------	
 	public Long getVentaId() {
@@ -55,27 +46,19 @@ public class VentaEntity {
 		this.fechaVenta = fechaVenta;
 	}
 
-	public int getUdsVendidas() {
-		return udsVendidas;
+	public ClienteEntity getCliente() {
+		return cliente;
 	}
 
-	public void setUdsVendidas(int udsVendidas) {
-		this.udsVendidas = udsVendidas;
+	public void setCliente(ClienteEntity cliente) {
+		this.cliente = cliente;
 	}
 
-	public ClienteEntity getClienteId() {
-		return clienteId;
+	public List<VentaProductoEntity> getProductosVendidos() {
+		return productosVendidos;
 	}
 
-	public void setClienteId(ClienteEntity clienteId) {
-		this.clienteId = clienteId;
-	}
-
-	public ProductoEntity getProductoId() {
-		return productoId;
-	}
-
-	public void setProductoId(ProductoEntity productoId) {
-		this.productoId = productoId;
+	public void setProductosVendidos(List<VentaProductoEntity> productosVendidos) {
+		this.productosVendidos = productosVendidos;
 	}
 }

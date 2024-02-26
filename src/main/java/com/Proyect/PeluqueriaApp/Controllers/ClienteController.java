@@ -3,7 +3,6 @@ package com.Proyect.PeluqueriaApp.Controllers;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
 import com.Proyect.PeluqueriaApp.Entities.EstilistaEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,6 +30,18 @@ public class ClienteController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		} else {
 			return ResponseEntity.status(HttpStatus.OK).body(listadoClientes);
+		}
+	}
+
+	@GetMapping("/deAlta")
+	public ResponseEntity<?> listarClientesDeAlta() {
+
+		List<ClienteEntity> listarClientesDeAlta = this.clienteService.listarClientesDeAlta();
+
+		if (listarClientesDeAlta.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		} else {
+			return ResponseEntity.status(HttpStatus.OK).body(listarClientesDeAlta);
 		}
 	}
 	

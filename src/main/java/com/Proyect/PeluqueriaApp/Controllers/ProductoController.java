@@ -31,6 +31,18 @@ public class ProductoController {
 			return ResponseEntity.status(HttpStatus.OK).body(listadoProductos);
 		}
 	}
+
+	@GetMapping("/deAlta")
+	public ResponseEntity<?> listarProductosDeAlta() {
+
+		List<ProductoEntity> listarProductosDeAlta = this.productoService.listarProductosDeAlta();
+
+		if (listarProductosDeAlta.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		} else {
+			return ResponseEntity.status(HttpStatus.OK).body(listarProductosDeAlta);
+		}
+	}
 	
 	@GetMapping("/{id}")
 	public ProductoEntity obtenerProductoPorId(@PathVariable Long id) {

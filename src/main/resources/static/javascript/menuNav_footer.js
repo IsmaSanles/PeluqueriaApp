@@ -3,7 +3,7 @@ const footer = $("footer");
 
 // código para el menú de navegación
 header.html( `
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333;">
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333; padding-bottom:15px; padding-top:15px; font-family: Verdana; font-size:18px;">
     <div class="container">
         <a class="navbar-brand" href="#">Peluquería Zitane</a>
         
@@ -17,23 +17,26 @@ header.html( `
             <!-- Actualiza los atributos href a atributos data-view -->
 			<ul class="navbar-nav ml-auto">
 			    <li class="nav-item">
-			        <a class="nav-link" href="../index/index.html" data-view="">Inicio</a>
+			        <a class="nav-link" href="../index/index.html" data-view="index.html">Inicio</a>
 			    </li>
 			    <li class="nav-item">
-			        <a class="nav-link" href="../clientes/clientes.html" data-view="">Cliente</a>
+			        <a class="nav-link" href="../clientes/clientes.html" data-view="clientes.html">Clientes</a>
 			    </li>
 			    <li class="nav-item">
-			        <a class="nav-link" href="../estilistas/estilistas.html" data-view="">Empleados</a>
-			    </li>
-			    <li class="nav-item">
-			        <a class="nav-link" href="#" data-view="citas.html">Citas</a>
-			    </li>
-			    <li class="nav-item">
-			        <a class="nav-link" href="../productos/productos.html" data-view="productos.html">Productos</a>
+			        <a class="nav-link" href="../estilistas/estilistas.html" data-view="estilistas.html">Empleados</a>
 			    </li>
 			    <li class="nav-item">
 			        <a class="nav-link" href="../servicios/servicios.html">Servicios</a>
 			    </li>
+			    <li class="nav-item">
+                    <a class="nav-link" href="#" data-view="citas.html">Citas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../productos/productos.html" data-view="productos.html">Productos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../ventas/ventas.html" data-view="ventas.html">Ventas</a>
+                </li>
 			</ul>
         </div>
     </div>
@@ -42,12 +45,12 @@ header.html( `
 
 // código para el footer
 footer.html(`
-<footer class="d-flex flex-wrap justify-content-between align-items-center py-3 border-top bg-dark text-white">
+<footer class="d-flex flex-wrap justify-content-between align-items-center py-3 border-top bg-dark text-white"  style="padding-bottom:15px; padding-top:15px; font-family: Verdana; font-size:18px;">
 	 <div class="col-md-4 d-flex align-items-center">
 		<a href="/" class="mb-3 me-2 mb-md-0 text-white text-decoration-none lh-1">
 	  		<svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
 		</a>
-		<span class="mb-3 mb-md-0">© 2022 Company, Inc</span>
+		<span class="mb-3 mb-md-0">© 2024 Company, Inc</span>
 	 </div>
 	
 	 <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">

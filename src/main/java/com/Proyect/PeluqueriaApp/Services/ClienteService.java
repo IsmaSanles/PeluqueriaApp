@@ -17,6 +17,11 @@ public class ClienteService {
 	public List<ClienteEntity> listarClientes(){
 		return (List<ClienteEntity>) clienteRepository.findAll();
 	}
+
+	// Listar Todos lo que están de alta
+	public List<ClienteEntity> listarClientesDeAlta(){
+		return (List<ClienteEntity>) clienteRepository.listarClientesDeAlta();
+	}
 	
 	// recuperar un cliente por Id
 	public Optional<ClienteEntity> clienteById(Long Id){

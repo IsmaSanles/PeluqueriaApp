@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>Ventas</title>
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="../../static/recursosApp/bootstrap.min.css">
+        <!-- DataTables CSS -->
+        <link rel="stylesheet" href="../../static/recursosApp/jquery.dataTables.min.css">
+        <!-- jQuery UI CSS -->
+        <link rel="stylesheet" href="../../static/recursosApp/jquery-ui.css">
+        <!-- Bootstrap Icons CSS -->
+        <link rel="stylesheet" href="../../static/recursosApp/icons-main/font/bootstrap-icons.min.css">
+        <!-- Toastr CSS -->
+        <link rel="stylesheet" href="../../static/recursosApp/toastr.min.css">
+        <!-- Select2 CSS -->
+        <link rel="stylesheet" href="../../static/recursosApp/select2.min.css">
+
+    </head>
+
+    <body style="height: auto;">
+
+        <header>
+            <!-- Aquí se carga el header mediante un archivo javascript -->
+        </header>
+
+        <div class="container-fluid">
+            <div class="container my-4">
+                <h1 class="text-center font-weight-bold"><i class="bi bi-cart-fill"></i> Gestión de Ventas</h1>
+            </div>
+            <hr>
+
+            <div class="container my-4">
+                <button type="button" id="crearNuevaVenta" class="btn btn-primary btn-lg"><i class="bi bi-cart-plus"></i> Nueva Venta</button>
+            </div>
+
+            <div class="container my-4">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                        <table id="tablaVentas" class="table table-striped">
+                            <thead  id="theadVentas">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Nombre Cliente</th>
+                                <th>Apellido</th>
+                                <th>Dni</th>
+                                <th>Producto</th>
+                                <th>Precio</th>
+                                <th>Total</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tbodyVentas">
+                                <!-- Aquí se agregarán las filas con datos -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modales -->
+        <!-- Modal Crear -->
+        <div class="modal fade" data-backdrop="static" id="modalCrearVenta" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document" style="max-width: 1100px;">
+                <div class="modal-content">
+                    <!-- modal-header -->
+                    <div class="modal-header">
+                        <h5 class="modal-title">Nueva Venta</h5>
+                    </div>
+
+                    <!-- modal-body -->
+                    <div class="modal-body">
+                        <form class="needs-validation" novalidate>
+
+                            <!-- Primer select para seleccionar cliente -->
+                            <div class="form-row">
+                                <div class="form-group col-md-6 position-relative">
+                                    <label for="cliente">Cliente *</label>
+                                    <select class="form-control selectClientes" id="selectClientes" required>
+                                        <!-- Agrega más opciones según sea necesario -->
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Segundo select para seleccionar producto -->
+                            <div class="form-row">
+                                <div class="form-group col-md-6 position-relative">
+                                    <label for="producto">Producto *</label>
+                                    <select class="form-control selectProductos" id="selectProductos" required>
+                                        <!-- Agrega más opciones según sea necesario -->
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-2 position-relative">
+                                    <label for="cantidad">Cantidad *</label>
+                                    <input type="number" class="form-control" id="cantidad" min="1" style="height:30px" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <p>Los campos con (*) son obligatorios.</p>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="btnCerrar" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="button" id="btnCrear" class="btn btn-primary">Crear</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Update -->
+        <div class="modal fade" data-backdrop="static" id="modalEditarEstilista" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document" style="max-width: 1100px;">
+                <div class="modal-content">
+                    <!-- modal-header -->
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar datos empleado</h5>
+                    </div>
+                    <!-- modal-body -->
+                    <div class="modal-body">
+
+                        <form class="needs-validation" novalidate>
+                            <div class="form-row">
+
+                                <div class="col-md-4 mb-3">
+                                    <label for="nombre">Nombre *</label>
+                                    <input type="text" class="form-control" id="nombreEditar" placeholder="Nombre"  required>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label for="apellido1">1º Apellido *</label>
+                                    <input type="text" class="form-control" id="apellido1Editar" placeholder="1º Apellido" required>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label for="apellido2">2º Apellido</label>
+                                    <input type="text" class="form-control" id="apellido2Editar" placeholder="2º Apellido">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="nombre">DNI *</label>
+                                    <input type="text" class="form-control" id="dniEditar" placeholder="55443322R"  required>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label for="telefono">Teléfono</label>
+                                    <input type="text" class="form-control" id="telefonoEditar" placeholder="Ingrese número de teléfono">
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label for="email">Email *</label>
+                                    <input type="email" class="form-control" id="emailEditar" placeholder="ejemplo@mail.com"  required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="fechaNacimiento">Fecha de Nacimiento *</label>
+                                    <input type="text" class="form-control" id="fechaNacimientoEditar" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <p>Los campos con (*) son obligatorios.</p>
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="btnCerrar" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="button" id="btnEditar" class="btn btn-primary">Ok</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ZONA DE SCRIPTS-->
+        <!-- jQuery -->
+        <script src="../../static/recursosApp/jquery.min.js"></script>
+        <!-- DataTables JS -->
+        <script src="../../static/recursosApp/jquery.dataTables.min.js"></script>
+        <!-- Bootstrap JS -->
+        <script src="../../static/recursosApp/bootstrap.min.js"></script>
+        <!-- jQuery UI JS -->
+        <script src="../../static/recursosApp/jquery-ui.js"></script>
+        <!-- Toastr JS -->
+        <script src="../../static/recursosApp/toastr.min.js"></script>
+        <!-- Select2 JS -->
+        <script src="../../static/recursosApp/select2.min.js"></script>
+
+
+        <!-- Archivos JavaScript opciones de DataTable -->
+        <script src="../../static/javascript/dataTablesConfig.js"></script>
+        <!-- script cargar menu navegación y footer -->
+        <script src="../../static/javascript/menuNav_footer.js"></script>
+        <!-- Archivos JavaScript para nuestra vista -->
+        <script src="../../static/javascript/ventas/ventas.js"></script>
+    </body>
+</html>
