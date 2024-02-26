@@ -39,16 +39,6 @@ public class ProductoEntity {
 	
 	@Column(name="fechaModificacion")
 	private Date fechaModificacion;
-	
-// ------------------------------------------------------- RELACIONES --------------------------------------------------------------	
-	/* Un producto estará disponible para multiples Ventas */
-	/*@JsonIgnore
-	@OneToMany(mappedBy = "productoId") // La propiedad "productoId" en VentaEntidad
-    private List<VentaEntity> listaVentas; */
-
-	@JsonBackReference
-	@ManyToMany(mappedBy = "listaProductos")
-	private List<VentaEntity> listaVentas;
 
 // ------------------------------------------------------- GETTERS/SETTERS --------------------------------------------------------------	
 	public Long getProductoId() {
@@ -115,11 +105,4 @@ public class ProductoEntity {
 		this.deAlta = deAlta;
 	}
 
-	public List<VentaEntity> getListaVentas() {
-		return listaVentas;
-	}
-
-	public void setListaVentas(List<VentaEntity> listaVentas) {
-		this.listaVentas = listaVentas;
-	}
 }

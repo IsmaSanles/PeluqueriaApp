@@ -22,11 +22,11 @@ public class VentaEntity {
 	
 // ------------------------------------------------------- RELACIONES --------------------------------------------------------------		
 	/* cada Venta tendrá un solo Cliente */
-	@ManyToOne
+	/*@ManyToOne
 	@NotNull// utilizamos NotNull para valores numéricos
 	@JsonIgnoreProperties({"ventas"}) // Evitar bucle infinito al serializar ClienteEntity
     @JoinColumn(name = "clienteId", nullable = false)
-	private ClienteEntity clienteId;
+	private ClienteEntity cliente;
 
 	@ManyToMany
 	@JsonIgnoreProperties({"listaVentas"}) // Evitar bucle infinito al serializar ProductoEntity
@@ -34,6 +34,15 @@ public class VentaEntity {
 			joinColumns = @JoinColumn(name = "ventaId"),
 			inverseJoinColumns = @JoinColumn(name = "productoId"))
 	private List<ProductoEntity> listaProductos;
+	*/
+
+
+	@ManyToOne
+	@JoinColumn(name = "cliente_id") // Columna en la tabla Venta que referencia al cliente
+	private ClienteEntity cliente;
+
+	@OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
+	private List<VentaProductoEntity> productosVendidos;
 
 // ------------------------------------------------------- GETTERS/SETTERS --------------------------------------------------------------	
 	public Long getVentaId() {
@@ -52,19 +61,19 @@ public class VentaEntity {
 		this.fechaVenta = fechaVenta;
 	}
 
-	public ClienteEntity getClienteId() {
-		return clienteId;
+	public ClienteEntity getCliente() {
+		return cliente;
 	}
 
-	public void setClienteId(ClienteEntity clienteId) {
-		this.clienteId = clienteId;
+	public void setCliente(ClienteEntity cliente) {
+		this.cliente = cliente;
 	}
 
-	public List<ProductoEntity> getListaProductos() {
-		return listaProductos;
+	public List<VentaProductoEntity> getProductosVendidos() {
+		return productosVendidos;
 	}
 
-	public void setListaProductos(List<ProductoEntity> listaProductos) {
-		this.listaProductos = listaProductos;
+	public void setProductosVendidos(List<VentaProductoEntity> productosVendidos) {
+		this.productosVendidos = productosVendidos;
 	}
 }
