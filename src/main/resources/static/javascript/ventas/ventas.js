@@ -31,32 +31,41 @@ function listarVentas() {
 
             let content = ``;
             data.forEach(function (venta) {
-                // Crea una variable para almacenar los productos de esta venta
+                //console.log('venta ' + JSON.stringify(venta)); // comprobar que llega
+
+                // Crea una variable para almacenar los productos de esta venta y otra para las unidades
                 let productosHtml = '';
+                let udsVentaHtml = '';
+                let totalVenta = 0; // Variable para almacenar el total de la venta
                 // Itera sobre la lista de productos de esta venta
-                venta.listaProductos.forEach(function(producto) {
+                venta.productosVendidos.forEach(function(objeto) {
                     // Agrega cada producto como una fila en la celda
-                    productosHtml += `<span>${producto.nombre}</span><br>`;
+                    productosHtml += `<span>${objeto.producto.nombre}</span><br>`;
+
+                    udsVentaHtml += `<span>${objeto.udsVendidas}</span><br>`;
+                    // Calcula el precio total del producto (cantidad * precio) y suma al total de la venta
+                    totalVenta += objeto.udsVendidas * objeto.producto.precio;
                 });
                 // Construye la fila de la tabla con los datos de la venta
                 content += `
                 <tr>
                     <td>${formatoFecha(venta.fechaVenta)}</td>
                     <td>${formatoHora(venta.fechaVenta)}</td>
-                    <td>${venta.clienteId.nombre}</td>
-                    <td>${venta.clienteId.apellido1}</td>
-                    <td>${venta.clienteId.dni}</td>
+                    <td>${venta.cliente.nombre}</td>
+                    <td>${venta.cliente.apellido1}</td>
+                    <td>${venta.cliente.dni}</td>
                     <td>${productosHtml}</td> <!-- Aquí se insertan los productos -->
+                    <td>${udsVentaHtml}</td> <!-- Aquí se insertan las udsVenta -->
                     <td>
                         <ul style="list-style-type: none; padding: 0; margin: 0;">`;
                             // Itera sobre la lista de productos de esta venta para mostrar los precios individuales
-                            venta.listaProductos.forEach(function(producto) {
-                                content += `<li>${producto.precio}</li>`;
+                            venta.productosVendidos.forEach(function(objeto) {
+                                content += `<li>${objeto.producto.precio}</li>`;
                             });
                             content += `
                         </ul>
                     </td>
-                    <td>TOTAL</td>
+                    <td>${totalVenta.toFixed(2)}</td> <!-- Muestra el total de la venta -->
                     <td class="d-flex">
                         <button class="btn btn-primary mr-2 editarVentaBtn" data-estilista-id="${venta.ventaId}">
                             <i class="bi bi-pencil-square"></i>

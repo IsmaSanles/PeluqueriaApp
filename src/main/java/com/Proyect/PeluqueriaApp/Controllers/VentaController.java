@@ -87,7 +87,7 @@ public class VentaController {
 			return ResponseEntity.status(HttpStatus.OK).body(ventaGuardada);
 		} catch (Exception e) {
 			// Manejar cualquier excepción que ocurra durante el proceso
-			System.err.println("ERROR: " + e);
+			System.err.println("ERROR en el controlador CrearVenta: " + e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear la venta");
 		}
 	}
