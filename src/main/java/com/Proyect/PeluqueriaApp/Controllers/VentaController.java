@@ -1,6 +1,7 @@
 package com.Proyect.PeluqueriaApp.Controllers;
 
 import com.Proyect.PeluqueriaApp.Entities.VentaEntity;
+import com.Proyect.PeluqueriaApp.Entities.VentaProductoEntity;
 import com.Proyect.PeluqueriaApp.Services.VentaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,18 +59,39 @@ public class VentaController {
 	}
 	*/
 	@PostMapping("/crear")
-    public ResponseEntity<?> crearVenta(@Valid @RequestBody VentaEntity venta, BindingResult result) {
-        if (result.hasErrors()) {
-            // Manejar los errores de validación y devolverlos como parte de la respuesta HTTP
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
-        }
+	public ResponseEntity<?> crearVenta(@Valid @RequestBody VentaEntity venta, BindingResult result) {
+		try {
+			if (result.hasErrors()) {
+				// Manejar los errores de validación y devolverlos como parte de la respuesta HTTP
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
+			}
 
-		venta.setFechaVenta(new Date());
+			// Añadimos la fecha de Creación a la fecha de Venta
+			venta.setFechaVenta(new Date());
 
-        // Si no hay errores de validación, crear el estilista
-		VentaEntity nuevaVenta = ventaService.crearVenta(venta);
-        return ResponseEntity.status(HttpStatus.OK).body(nuevaVenta);
-    }
+			// Añadimos la fecha de Creación a cada VentaProducto
+			for (VentaProductoEntity ventaProducto : venta.getProductosVendidos()) {
+				ventaProducto.setFechaCreacion(new Date());
+			}
+
+			// Si no hay errores de validación, crear la venta
+			VentaEntity nuevaVenta = ventaService.crearVenta(venta);
+
+			for (VentaProductoEntity ventaProducto : venta.getProductosVendidos()) {
+				ventaProducto.setVenta(nuevaVenta);
+			}
+
+			// Persistir la venta con los productos vendidos
+			VentaEntity ventaGuardada = ventaService.modificarVenta(nuevaVenta);
+
+			return ResponseEntity.status(HttpStatus.OK).body(ventaGuardada);
+		} catch (Exception e) {
+			// Manejar cualquier excepción que ocurra durante el proceso
+			System.err.println("ERROR: " + e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear la venta");
+		}
+	}
+
 	/*
 	@PutMapping("/{id}")
     public ResponseEntity<?> modificarEstilista(@PathVariable Long id, @Valid @RequestBody EstilistaEntity nuevoEstilista, BindingResult result) {

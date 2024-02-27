@@ -3,6 +3,10 @@ $(document).ready(function () {
     listarVentas();
     abrirModalCrear();
 
+    // creamos un escuchador al botón crear del modal de Crear Venta
+    $("#btnCrear").on("click", function() {
+        crearVenta();
+    });
 });
 
 function abrirModalCrear() {
@@ -12,11 +16,6 @@ function abrirModalCrear() {
         // Cargar clientes y productos al abrir el modal de crear venta
         cargarClientes();
         cargarProductos();
-
-        // creamos un escuchador al botón crear del modal de Crear Venta
-        $("#btnCrear").on("click", function() {
-            crearVenta();
-        });
     });
 }
 
@@ -134,9 +133,13 @@ function crearVenta() {
             dataType: "json",
             contentType: "application/json",
             data: JSON.stringify({
-                cantidad,
-                clienteId,
-                productoId
+                cliente: { clienteId: clienteId },
+                productosVendidos: [
+                    {
+                        producto: { productoId: productoId },
+                        udsVendidas: cantidad
+                    }
+                ]
             }),
             success: function (data) {
 
