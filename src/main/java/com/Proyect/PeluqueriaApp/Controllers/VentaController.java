@@ -5,6 +5,7 @@ import com.Proyect.PeluqueriaApp.Entities.VentaProductoEntity;
 import com.Proyect.PeluqueriaApp.Services.VentaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -59,6 +60,7 @@ public class VentaController {
 	}
 	*/
 	@PostMapping("/crear")
+	@Transactional(rollbackFor = Exception.class) // Rollback para cualquier excepción
 	public ResponseEntity<?> crearVenta(@Valid @RequestBody VentaEntity venta, BindingResult result) {
 		try {
 			if (result.hasErrors()) {
@@ -74,14 +76,15 @@ public class VentaController {
 				ventaProducto.setFechaCreacion(new Date());
 			}
 
-			// Si no hay errores de validación, crear la venta
+			// crear la venta
 			VentaEntity nuevaVenta = ventaService.crearVenta(venta);
 
+			// indicamos en cada producto vendido el Id de la venta que le corresponde
 			for (VentaProductoEntity ventaProducto : venta.getProductosVendidos()) {
 				ventaProducto.setVenta(nuevaVenta);
 			}
 
-			// Persistir la venta con los productos vendidos
+			// guardamos con update y asi tenemos todos los datos
 			VentaEntity ventaGuardada = ventaService.modificarVenta(nuevaVenta);
 
 			return ResponseEntity.status(HttpStatus.OK).body(ventaGuardada);

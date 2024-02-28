@@ -91,7 +91,6 @@ function listarVentas() {
         error: function (error) {
 			// En caso de error, ocultar la tabla y mostrar el mensaje de fallo
             $("#tablaVentas").hide();
-            $("#mensajeFallo").show();
             toastr.error("Hubo un error al cargar las Ventas");
         }
     });
@@ -151,7 +150,6 @@ function crearVenta() {
                 ]
             }),
             success: function (data) {
-
                 // Mostrar mensaje de éxito con Toastr
                 toastr.success("Venta añadida con éxito");
 
@@ -188,11 +186,10 @@ function cargarClientes() {
                 $('#selectClientes').append(`<option value="${cliente.clienteId}">${cliente.dni} - ${fullName}</option>`);
             });
 
-            // Aplicar Select2 al selector de clientes
+            // Aplicar libreria 'Select2' al selector de clientes
             $('#selectClientes').select2({
                 dropdownParent: $('#modalCrearVenta'),
-                width: '100%',
-                height: '10px'
+                width: '100%'
             });
         },
         error: function (error) {
@@ -217,11 +214,10 @@ function cargarProductos() {
                 $('#selectProductos').append(`<option value="${producto.productoId}">${producto.nombre}</option>`);
             });
 
-            // Aplicar Select2 al selector de productos
+            // Aplicar libreria 'Select2' al selector de productos
             $('#selectProductos').select2({
                 dropdownParent: $('#modalCrearVenta'),
-                width: '100%',
-                height: '100%'
+                width: '100%'
             });
         },
         error: function (error) {
