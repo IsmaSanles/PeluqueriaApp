@@ -46,9 +46,10 @@
                                 <th>Fecha</th>
                                 <th>Hora</th>
                                 <th>Nombre Cliente</th>
-                                <th>Apellido</th>
+                                <th>1º Apellido</th>
                                 <th>Dni</th>
                                 <th>Producto</th>
+                                <th>Unidades venta</th>
                                 <th>Precio</th>
                                 <th>Total</th>
                                 <th>Acciones</th>
@@ -72,7 +73,7 @@
                     <div class="modal-header">
                         <h5 class="modal-title">Nueva Venta</h5>
                     </div>
-
+                    <hr>
                     <!-- modal-body -->
                     <div class="modal-body">
                         <form class="needs-validation" novalidate>
@@ -89,15 +90,18 @@
 
                             <!-- Segundo select para seleccionar producto -->
                             <div class="form-row">
-                                <div class="form-group col-md-6 position-relative">
+                                <div class="form-group col-md-6">
                                     <label for="producto">Producto *</label>
                                     <select class="form-control selectProductos" id="selectProductos" required>
                                         <!-- Agrega más opciones según sea necesario -->
                                     </select>
                                 </div>
-                                <div class="form-group col-md-2 position-relative">
+                                <div class="form-group col-md-2">
                                     <label for="cantidad">Cantidad *</label>
                                     <input type="number" class="form-control" id="cantidad" min="1" style="height:30px" required>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <button type="button" id="btnAnadirAlCarrito" class="btn-xs btn-success" style="margin-top:30px" title="Añadir al carrito"><i class="bi bi-cart-fill"></i> Añadir</button>
                                 </div>
                             </div>
 
@@ -105,7 +109,29 @@
                                 <p>Los campos con (*) son obligatorios.</p>
                             </div>
                         </form>
+
+                        <!-- Lista de productos añadidos -->
+                        <div class="form-row">
+                            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                                <table id="tablaProductosCarrito" class="table table-striped">
+                                    <thead  id="theadProductosCarrito">
+                                    <tr style="text-align:center">
+                                        <th>Producto</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio</th>
+                                        <th>Total</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="tbodyProductosCarrito">
+                                    <!-- Aquí se agregarán las filas con datos -->
+                                    </tbody>
+                                </table>
+                                <hr>
+                            </div>
+                        </div>
                     </div>
+
                     <div class="modal-footer">
                         <button type="button" id="btnCerrar" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                         <button type="button" id="btnCrear" class="btn btn-primary">Crear</button>

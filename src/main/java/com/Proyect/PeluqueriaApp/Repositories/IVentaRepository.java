@@ -15,11 +15,11 @@ public interface IVentaRepository extends JpaRepository<VentaEntity, Long>{
     */
 
     // Consulta para obtener todas las ventas con los datos del cliente y los productos
-    //@Query("SELECT DISTINCT v FROM VentaEntity v JOIN FETCH v.cliente c JOIN FETCH v.productosVendidos pv JOIN FETCH pv.producto")
-    //@Query("SELECT vp.id AS venta_producto_id, vp.fechaCreacion AS fecha_creacion, vp.fechaModificacion AS fecha_modificacion, vp.cantidad AS uds_vendidas, vp.producto.id AS producto_id, vp.producto.nombre AS producto_nombre, vp.producto.precio AS producto_precio, vp.venta.id AS venta_id FROM VentaProducto vp")
     @Query("SELECT DISTINCT v FROM VentaEntity v JOIN FETCH v.cliente c JOIN FETCH v.productosVendidos pv JOIN FETCH pv.producto p")
     List<VentaEntity> getAllVentasConDetalles();
 
-    //@Query("SELECT vp.id AS venta_producto_id, vp.fechaCreacion AS fecha_creacion, vp.fechaModificacion AS fecha_modificacion, vp.cantidad AS uds_vendidas, vp.producto.id AS producto_id, vp.producto.nombre AS producto_nombre, vp.producto.precio AS producto_precio, vp.venta.id AS venta_id FROM VentaProducto vp")
+    // esta consulta recupera todas las ventas y los datos asociados (usar en pruebas)
+    //@Query("SELECT v FROM VentaEntity v")
+    //List<VentaEntity> getAllVentasConDetalles();
 
 }

@@ -1,8 +1,13 @@
-
 $(document).ready(function () {
     listarVentas();
     abrirModalCrear();
 
+    anadirProductosCarritoTabla();
+
+    // creamos un escuchador al botón crear del modal de Crear Venta
+    $("#btnCrear").on("click", function() {
+        crearVenta();
+    });
 });
 
 function abrirModalCrear() {
@@ -12,11 +17,6 @@ function abrirModalCrear() {
         // Cargar clientes y productos al abrir el modal de crear venta
         cargarClientes();
         cargarProductos();
-
-        // creamos un escuchador al botón crear del modal de Crear Venta
-        $("#btnCrear").on("click", function() {
-            crearVenta();
-        });
     });
 }
 
@@ -32,32 +32,41 @@ function listarVentas() {
 
             let content = ``;
             data.forEach(function (venta) {
-                // Crea una variable para almacenar los productos de esta venta
+                //console.log('venta ' + JSON.stringify(venta)); // comprobar que llega
+
+                // Crea una variable para almacenar los productos de esta venta y otra para las unidades
                 let productosHtml = '';
+                let udsVentaHtml = '';
+                let totalVenta = 0; // Variable para almacenar el total de la venta
                 // Itera sobre la lista de productos de esta venta
-                venta.listaProductos.forEach(function(producto) {
+                venta.productosVendidos.forEach(function(objeto) {
                     // Agrega cada producto como una fila en la celda
-                    productosHtml += `<span>${producto.nombre}</span><br>`;
+                    productosHtml += `<span>${objeto.producto.nombre}</span><br>`;
+
+                    udsVentaHtml += `<span>${objeto.udsVendidas}</span><br>`;
+                    // Calcula el precio total del producto (cantidad * precio) y suma al total de la venta
+                    totalVenta += objeto.udsVendidas * objeto.producto.precio;
                 });
                 // Construye la fila de la tabla con los datos de la venta
                 content += `
                 <tr>
                     <td>${formatoFecha(venta.fechaVenta)}</td>
                     <td>${formatoHora(venta.fechaVenta)}</td>
-                    <td>${venta.clienteId.nombre}</td>
-                    <td>${venta.clienteId.apellido1}</td>
-                    <td>${venta.clienteId.dni}</td>
+                    <td>${venta.cliente.nombre}</td>
+                    <td>${venta.cliente.apellido1}</td>
+                    <td>${venta.cliente.dni}</td>
                     <td>${productosHtml}</td> <!-- Aquí se insertan los productos -->
+                    <td>${udsVentaHtml}</td> <!-- Aquí se insertan las udsVenta -->
                     <td>
                         <ul style="list-style-type: none; padding: 0; margin: 0;">`;
                             // Itera sobre la lista de productos de esta venta para mostrar los precios individuales
-                            venta.listaProductos.forEach(function(producto) {
-                                content += `<li>${producto.precio}</li>`;
+                            venta.productosVendidos.forEach(function(objeto) {
+                                content += `<li>${objeto.producto.precio.toFixed(2)}</li>`;
                             });
                             content += `
                         </ul>
                     </td>
-                    <td>TOTAL</td>
+                    <td>${totalVenta.toFixed(2)}</td> <!-- Muestra el total de la venta -->
                     <td class="d-flex">
                         <button class="btn btn-primary mr-2 editarVentaBtn" data-estilista-id="${venta.ventaId}">
                             <i class="bi bi-pencil-square"></i>
@@ -83,7 +92,6 @@ function listarVentas() {
         error: function (error) {
 			// En caso de error, ocultar la tabla y mostrar el mensaje de fallo
             $("#tablaVentas").hide();
-            $("#mensajeFallo").show();
             toastr.error("Hubo un error al cargar las Ventas");
         }
     });
@@ -134,12 +142,15 @@ function crearVenta() {
             dataType: "json",
             contentType: "application/json",
             data: JSON.stringify({
-                cantidad,
-                clienteId,
-                productoId
+                cliente: { clienteId: clienteId },
+                productosVendidos: [
+                    {
+                        producto: { productoId: productoId },
+                        udsVendidas: cantidad
+                    }
+                ]
             }),
             success: function (data) {
-
                 // Mostrar mensaje de éxito con Toastr
                 toastr.success("Venta añadida con éxito");
 
@@ -176,11 +187,10 @@ function cargarClientes() {
                 $('#selectClientes').append(`<option value="${cliente.clienteId}">${cliente.dni} - ${fullName}</option>`);
             });
 
-            // Aplicar Select2 al selector de clientes
+            // Aplicar libreria 'Select2' al selector de clientes
             $('#selectClientes').select2({
                 dropdownParent: $('#modalCrearVenta'),
-                width: '100%',
-                height: '10px'
+                width: '100%'
             });
         },
         error: function (error) {
@@ -205,11 +215,10 @@ function cargarProductos() {
                 $('#selectProductos').append(`<option value="${producto.productoId}">${producto.nombre}</option>`);
             });
 
-            // Aplicar Select2 al selector de productos
+            // Aplicar libreria 'Select2' al selector de productos
             $('#selectProductos').select2({
                 dropdownParent: $('#modalCrearVenta'),
-                width: '100%',
-                height: '100%'
+                width: '100%'
             });
         },
         error: function (error) {
@@ -217,7 +226,6 @@ function cargarProductos() {
         }
     });
 }
-
 
 //Método para mostrar la fecha 'dd-MM-yyyy'
 function formatoFecha(fecha) {
@@ -248,4 +256,72 @@ function formatoHora(fecha) {
     const formattedTime = `${horas < 10 ? '0' : ''}${horas}:${minutos < 10 ? '0' : ''}${minutos}`;
 
     return formattedTime;
+}
+
+// añade los productos a la tabla del Modal cada vez que pulsamos el botón
+function anadirProductosCarritoTabla(){
+     // Variable para mantener un contador de filas agregadas
+     let contadorFilas = -1;
+     let arrayProductoCantidad = [];
+
+    // Evento de clic para el botón btnAnadirAlCarrito
+    $('#btnAnadirAlCarrito').click(function() {
+
+        // Recuperamos los datos
+        let cantidad = $("#cantidad").val();
+        let productoId = $("#selectProductos").val();
+
+        // Realizamos una llamada AJAX para recuperar los datos del producto
+        $.ajax({
+            url: "http://localhost:8001/producto/" + productoId,
+            method: "GET",
+            dataType: "json",
+            success: function (producto) {
+
+                // Calculamos el total
+                let total = producto.precio * cantidad;
+
+                contadorFilas++;
+
+                // Creamos la fila HTML con los datos del producto
+                var fila =
+                    `<tr style="text-align:center">
+                        <td>${producto.nombre}</td>
+                        <td>${cantidad}</td>
+                        <td>${producto.precio.toFixed(2)} €</td>
+                        <td>${total.toFixed(2)} €</td>
+                        <td><button class="btn btn-danger btnEliminarProductoCarrito" data-fila="${contadorFilas}"><i class="bi bi-x-circle"></i> Eliminar</button></td>
+                    </tr>`;
+
+                // Agregamos la fila a la tabla
+                $('#tbodyProductosCarrito').append(fila);
+
+                // Limpiamos los campos después de agregar el producto al carrito
+                $("#cantidad").val("");  // Limpiar el campo cantidad
+                $("#selectProductos").val("").trigger("change"); // Limpiar y restablecer el selector de productos
+            },
+            error: function (xhr, status, error) {
+                console.error("Error al recuperar el producto: " + error);
+                var errorMessage = "Error al cargar los datos del producto: ";
+                if (xhr.status == 400) {
+                    errorMessage += "Error de solicitud. Por favor, verifique los datos enviados.";
+                } else if (xhr.status == 404) {
+                    errorMessage += "No se encontraron datos.";
+                } else if (xhr.status == 500) {
+                    errorMessage += "Error interno del servidor. Por favor, inténtelo de nuevo más tarde.";
+                }
+            }
+        });
+    });
+
+    // Evento de clic para el botón de eliminar producto
+    $('#tbodyProductosCarrito').on('click', '.btnEliminarProductoCarrito', function() {
+
+        // Recuperamos el identificador único de la fila a eliminar
+        let filaEliminar = $(this).data('fila');
+        console.log('Pulsado boton eliminar "data-fila" ' + filaEliminar);
+
+        // Buscamos la fila correspondiente y la eliminamos
+        $(`tr[data-fila="${filaEliminar}"]`).remove();
+    });
 }
