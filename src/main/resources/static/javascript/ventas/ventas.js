@@ -1,7 +1,8 @@
-
 $(document).ready(function () {
     listarVentas();
     abrirModalCrear();
+
+    anadirProductosCarritoTabla();
 
     // creamos un escuchador al botón crear del modal de Crear Venta
     $("#btnCrear").on("click", function() {
@@ -60,7 +61,7 @@ function listarVentas() {
                         <ul style="list-style-type: none; padding: 0; margin: 0;">`;
                             // Itera sobre la lista de productos de esta venta para mostrar los precios individuales
                             venta.productosVendidos.forEach(function(objeto) {
-                                content += `<li>${objeto.producto.precio}</li>`;
+                                content += `<li>${objeto.producto.precio.toFixed(2)}</li>`;
                             });
                             content += `
                         </ul>
@@ -226,7 +227,6 @@ function cargarProductos() {
     });
 }
 
-
 //Método para mostrar la fecha 'dd-MM-yyyy'
 function formatoFecha(fecha) {
     // Convierte la cadena de fecha a un objeto Date
@@ -256,4 +256,72 @@ function formatoHora(fecha) {
     const formattedTime = `${horas < 10 ? '0' : ''}${horas}:${minutos < 10 ? '0' : ''}${minutos}`;
 
     return formattedTime;
+}
+
+// añade los productos a la tabla del Modal cada vez que pulsamos el botón
+function anadirProductosCarritoTabla(){
+     // Variable para mantener un contador de filas agregadas
+     let contadorFilas = -1;
+     let arrayProductoCantidad = [];
+
+    // Evento de clic para el botón btnAnadirAlCarrito
+    $('#btnAnadirAlCarrito').click(function() {
+
+        // Recuperamos los datos
+        let cantidad = $("#cantidad").val();
+        let productoId = $("#selectProductos").val();
+
+        // Realizamos una llamada AJAX para recuperar los datos del producto
+        $.ajax({
+            url: "http://localhost:8001/producto/" + productoId,
+            method: "GET",
+            dataType: "json",
+            success: function (producto) {
+
+                // Calculamos el total
+                let total = producto.precio * cantidad;
+
+                contadorFilas++;
+
+                // Creamos la fila HTML con los datos del producto
+                var fila =
+                    `<tr style="text-align:center">
+                        <td>${producto.nombre}</td>
+                        <td>${cantidad}</td>
+                        <td>${producto.precio.toFixed(2)} €</td>
+                        <td>${total.toFixed(2)} €</td>
+                        <td><button class="btn btn-danger btnEliminarProductoCarrito" data-fila="${contadorFilas}"><i class="bi bi-x-circle"></i> Eliminar</button></td>
+                    </tr>`;
+
+                // Agregamos la fila a la tabla
+                $('#tbodyProductosCarrito').append(fila);
+
+                // Limpiamos los campos después de agregar el producto al carrito
+                $("#cantidad").val("");  // Limpiar el campo cantidad
+                $("#selectProductos").val("").trigger("change"); // Limpiar y restablecer el selector de productos
+            },
+            error: function (xhr, status, error) {
+                console.error("Error al recuperar el producto: " + error);
+                var errorMessage = "Error al cargar los datos del producto: ";
+                if (xhr.status == 400) {
+                    errorMessage += "Error de solicitud. Por favor, verifique los datos enviados.";
+                } else if (xhr.status == 404) {
+                    errorMessage += "No se encontraron datos.";
+                } else if (xhr.status == 500) {
+                    errorMessage += "Error interno del servidor. Por favor, inténtelo de nuevo más tarde.";
+                }
+            }
+        });
+    });
+
+    // Evento de clic para el botón de eliminar producto
+    $('#tbodyProductosCarrito').on('click', '.btnEliminarProductoCarrito', function() {
+
+        // Recuperamos el identificador único de la fila a eliminar
+        let filaEliminar = $(this).data('fila');
+        console.log('Pulsado boton eliminar "data-fila" ' + filaEliminar);
+
+        // Buscamos la fila correspondiente y la eliminamos
+        $(`tr[data-fila="${filaEliminar}"]`).remove();
+    });
 }
