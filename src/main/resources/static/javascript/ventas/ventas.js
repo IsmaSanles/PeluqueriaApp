@@ -1,12 +1,13 @@
+ var arrayProductoCantidad;
 $(document).ready(function () {
     // defino variable global
-    var arrayProductoCantidad = [];
+     arrayProductoCantidad = [];
 
     listarVentas();
     abrirModalCrear();
 
-    anadirProductosCarrito(arrayProductoCantidad);
-    eliminarProductoCarrito(arrayProductoCantidad);
+    anadirProductosCarrito();
+    eliminarProductoCarrito();
 
     // creamos un escuchador al botón crear del modal de Crear Venta
     $("#btnCrear").on("click", function() {
@@ -264,7 +265,7 @@ function formatoHora(fecha) {
 }
 
 // añade los productos a la tabla del Modal crearVenta cada vez que pulsamos el botón Añadir
-function anadirProductosCarrito(arrayProductoCantidad){
+function anadirProductosCarrito(){
      // Variable para mantener un contador de filas agregadas
      let contadorFilas = 0;
 
@@ -337,7 +338,7 @@ function anadirProductosCarrito(arrayProductoCantidad){
 }
 
 // elimina el producto de la tabla del Modal crearVenta al pulsar el botón Eliminar
-function eliminarProductoCarrito(arrayProductoCantidad){
+function eliminarProductoCarrito(){
 
      console.log('array eliminar: ' + JSON.stringify(arrayProductoCantidad));
 
@@ -357,6 +358,7 @@ function eliminarProductoCarrito(arrayProductoCantidad){
 
         // Llamamos a la función precioTotalVenta para actualizar el precio total de la venta
         precioTotalVenta(arrayProductoCantidad);
+
         return arrayProductoCantidad;
     });
 }
