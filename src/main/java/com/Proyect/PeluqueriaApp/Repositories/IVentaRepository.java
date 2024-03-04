@@ -10,18 +10,9 @@ import java.util.List;
 @Repository
 public interface IVentaRepository extends JpaRepository<VentaEntity, Long>{
 
-    /*
-    @Query("SELECT v FROM Venta v JOIN FETCH v.cliente c JOIN FETCH v.productosVendidos vp JOIN FETCH vp.producto WHERE v.id = :ventaId")
-    VentaEntity findVentaWithClienteAndProductosById(Long ventaId);
-    */
-
     // Consulta para obtener todas las ventas con los datos del cliente y los productos
     @Query("SELECT DISTINCT v FROM VentaEntity v JOIN FETCH v.cliente c JOIN FETCH v.productosVendidos pv JOIN FETCH pv.producto p")
     List<VentaEntity> getAllVentasConDetalles();
-
-    // esta consulta recupera todas las ventas y los datos asociados (usar en pruebas)
-    //@Query("SELECT v FROM VentaEntity v")
-    //List<VentaEntity> getAllVentasConDetalles();
 
     // recuperamos la venta por su Id con todos los datos de la misma
     @Query("SELECT DISTINCT v FROM VentaEntity v JOIN FETCH v.cliente c JOIN FETCH v.productosVendidos pv JOIN FETCH pv.producto p WHERE v.ventaId = :ventaId")

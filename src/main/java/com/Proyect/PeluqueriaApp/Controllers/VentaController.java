@@ -71,7 +71,7 @@ public class VentaController {
 				ventaProducto.setVenta(nuevaVenta);
 			}
 
-			// guardamos con update y asi tenemos todos los datos
+			// guardamos con update y así tenemos todos los datos
 			VentaEntity ventaGuardada = ventaService.modificarVenta(nuevaVenta);
 
 			return ResponseEntity.status(HttpStatus.OK).body(ventaGuardada);

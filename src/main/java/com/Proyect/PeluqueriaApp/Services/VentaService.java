@@ -12,13 +12,13 @@ public class VentaService {
 
 	@Autowired
 	private IVentaRepository ventaRepository;
-	
-	// Listar Todos
-	public List<VentaEntity> listarVentas(){
-		return (List<VentaEntity>) ventaRepository.findAll();
+
+	// Obtener todas las ventas con sus detalles
+	public List<VentaEntity> getAllVentasConDetalles() {
+		return ventaRepository.getAllVentasConDetalles();
 	}
 	
-	// recuperar una Venta por Id
+	// recuperar una Venta por Id con sus detalles
 	public Optional<VentaEntity> getVentaConDetallesPorId(Long Id){
 		return Optional.ofNullable(ventaRepository.getVentaConDetallesPorId(Id));
 	}
@@ -40,9 +40,6 @@ public class VentaService {
 	}
 	*/
 
-	// Obtener todas las ventas con detalles
-	public List<VentaEntity> getAllVentasConDetalles() {
-		return ventaRepository.getAllVentasConDetalles();
-	}
+
 
 }
