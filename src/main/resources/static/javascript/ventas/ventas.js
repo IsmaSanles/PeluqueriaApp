@@ -1,7 +1,7 @@
  var arrayProductoCantidad;
 $(document).ready(function () {
     // defino variable global
-     arrayProductoCantidad = [];
+    arrayProductoCantidad = [];
 
     listarVentas();
     abrirModalCrear();
@@ -105,16 +105,14 @@ function listarVentas() {
 // crear Nueva Venta
 function crearVenta() {
     // Recuperamos los datos para enviar al backend
-    let cantidad = $("#cantidad").val();
     let clienteId = $("#selectClientes").val();
-    let productoId = $("#selectProductos").val();
-    console.log('cantidad: ' + cantidad, 'clienteId: ' + clienteId, 'productoId: ' + productoId);
+    console.log('clienteId: ' + clienteId, 'productos: ' + JSON.stringify(arrayProductoCantidad));
 
     // Limpiamos los mensajes de error
     $(".is-invalid").removeClass("is-invalid"); // Quitar clases de error de todos los campos
     $(".invalid-tooltip").remove(); // Quitar todos los mensajes de error
 
-    // Comprobamos si clienteId, productoId o cantidad están vacíos
+    // Comprobamos si clienteId está vacío
     let errores = false;
 
     if (!clienteId) {
@@ -123,22 +121,21 @@ function crearVenta() {
         errores = true;
     }
 
-    if (!productoId) {
-        $("#selectProductos").addClass("is-invalid");
-        $("#selectProductos").after('<div class="invalid-tooltip">Campo obligatorio</div>');
+    // Comprobamos si el carrito está vacío
+    if (arrayProductoCantidad.length === 0) {
+        toastr.warning('El carrito está vacío, añade algún producto');
         errores = true;
     }
 
-    if (!cantidad) {
-        $("#cantidad").addClass("is-invalid");
-        $("#cantidad").after('<div class="invalid-tooltip">Campo obligatorio</div>');
-        errores = true;
-    }
-
-    if (errores) {
-        // Mostrar un mensaje general de error usando Bootstrap
-        $("#mensajeError").html('<div class="alert alert-danger" role="alert">Por favor, complete todos los campos obligatorios.</div>');
-    } else {
+    if (!errores) {
+        // Construir la lista de productos para enviar al backend
+        let productosVendidos = [];
+        arrayProductoCantidad.forEach(function(productoCantidad) {
+            productosVendidos.push({
+                producto: { productoId: productoCantidad.producto.productoId },
+                udsVendidas: productoCantidad.cantidad
+            });
+        });
 
         // Ejecución de petición AJAX para la conexión con el backend
         $.ajax({
@@ -148,12 +145,7 @@ function crearVenta() {
             contentType: "application/json",
             data: JSON.stringify({
                 cliente: { clienteId: clienteId },
-                productosVendidos: [
-                    {
-                        producto: { productoId: productoId },
-                        udsVendidas: cantidad
-                    }
-                ]
+                productosVendidos: productosVendidos
             }),
             success: function (data) {
                 // Mostrar mensaje de éxito con Toastr
@@ -272,69 +264,85 @@ function anadirProductosCarrito(){
     // Evento de clic para el botón btnAnadirAlCarrito
     $('#btnAnadirAlCarrito').click(function() {
 
+        // Limpiamos los mensajes de error
+        $(".is-invalid").removeClass("is-invalid"); // Quitar clases de error de todos los campos
+        $(".invalid-tooltip").remove(); // Quitar todos los mensajes de error
+
         // Recuperamos los datos
         let cantidad = $("#cantidad").val();
         let productoId = $("#selectProductos").val();
 
-        // Realizamos una llamada AJAX para recuperar los datos del producto
-        $.ajax({
-            url: "http://localhost:8001/producto/" + productoId,
-            method: "GET",
-            dataType: "json",
-            success: function (producto) {
-                // Calculamos el total
-                let total = (producto.precio * cantidad).toFixed(2);
+        // Comprobamos si productoId y cantidad están vacíos
+        let errores = false;
 
-                contadorFilas++; // aumentamos el contador
+        if (!productoId) {
+            $("#selectProductos").addClass("is-invalid");
+            $("#selectProductos").after('<div class="invalid-tooltip">Campo obligatorio</div>');
+            errores = true;
+        }
+        if (!cantidad) {
+            $("#cantidad").addClass("is-invalid");
+            $("#cantidad").after('<div class="invalid-tooltip">Campo obligatorio</div>');
+            errores = true;
+        }
 
-                // añadimos la fila, la cantidad, el productoId y el total al array
-                arrayProductoCantidad.push(
-                    {
-                        "fila": contadorFilas,
-                        "cantidad": cantidad,
-                        "producto": producto,
-                        "total": total
+        if(!errores){
+            // Realizamos una llamada AJAX para recuperar los datos del producto
+            $.ajax({
+                url: "http://localhost:8001/producto/" + productoId,
+                method: "GET",
+                dataType: "json",
+                success: function (producto) {
+                    // Calculamos el total
+                    let total = (producto.precio * cantidad).toFixed(2);
+
+                    contadorFilas++; // aumentamos el contador
+
+                    // añadimos la fila, la cantidad, el productoId y el total al array
+                    arrayProductoCantidad.push(
+                        {
+                            "fila": contadorFilas,
+                            "cantidad": cantidad,
+                            "producto": producto,
+                            "total": total
+                        }
+                    );
+                    console.log('array añadir: ' + JSON.stringify(arrayProductoCantidad)); // para ver los datos del array
+
+                    // Creamos la fila HTML con los datos del producto
+                    let fila =
+                        `<tr data-fila="${contadorFilas}" style="text-align:center">
+                            <td>${producto.nombre}</td>
+                            <td>${cantidad}</td>
+                            <td>${producto.precio.toFixed(2)} €</td>
+                            <td>${total} €</td>
+                            <td><button class="btn btn-danger btnEliminarProductoCarrito" data-fila="${contadorFilas}"><i class="bi bi-x-circle"></i> Eliminar</button></td>
+                        </tr>`;
+
+                    // añadimos la fila a la tabla
+                    $('#tbodyProductosCarrito').append(fila);
+
+                    // Limpiamos los campos después de agregar el producto al carrito
+                    $("#cantidad").val("");
+                    $("#selectProductos").val("").trigger("change");
+
+                    // llamada al metodo para la suma total de la venta
+                    precioTotalVenta(arrayProductoCantidad);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error al recuperar el producto: " + error);
+                    let errorMessage = "Error al cargar los datos del producto: ";
+                    if (xhr.status == 400) {
+                        errorMessage += "Error de solicitud. Por favor, verifique los datos enviados.";
+                    } else if (xhr.status == 404) {
+                        errorMessage += "No se encontraron datos.";
+                    } else if (xhr.status == 500) {
+                        errorMessage += "Error interno del servidor. Por favor, inténtelo de nuevo más tarde.";
                     }
-                );
-                console.log('array añadir: ' + JSON.stringify(arrayProductoCantidad)); // para ver los datos del array
-
-                // Creamos la fila HTML con los datos del producto
-                let fila =
-                    `<tr data-fila="${contadorFilas}" style="text-align:center">
-                        <td>${producto.nombre}</td>
-                        <td>${cantidad}</td>
-                        <td>${producto.precio.toFixed(2)} €</td>
-                        <td>${total} €</td>
-                        <td><button class="btn btn-danger btnEliminarProductoCarrito" data-fila="${contadorFilas}"><i class="bi bi-x-circle"></i> Eliminar</button></td>
-                    </tr>`;
-
-                // añadimos la fila a la tabla
-                $('#tbodyProductosCarrito').append(fila);
-
-                // Limpiamos los campos después de agregar el producto al carrito
-                $("#cantidad").val("");
-                $("#selectProductos").val("").trigger("change");
-
-                // llamada al metodo para la suma total de la venta
-                precioTotalVenta(arrayProductoCantidad);
-                // si quiero eliminar alguno
-
-            },
-            error: function (xhr, status, error) {
-                console.error("Error al recuperar el producto: " + error);
-                let errorMessage = "Error al cargar los datos del producto: ";
-                if (xhr.status == 400) {
-                    errorMessage += "Error de solicitud. Por favor, verifique los datos enviados.";
-                } else if (xhr.status == 404) {
-                    errorMessage += "No se encontraron datos.";
-                } else if (xhr.status == 500) {
-                    errorMessage += "Error interno del servidor. Por favor, inténtelo de nuevo más tarde.";
                 }
-            }
-        });
+            });
+        }
     });
-
-
 }
 
 // elimina el producto de la tabla del Modal crearVenta al pulsar el botón Eliminar
@@ -358,8 +366,6 @@ function eliminarProductoCarrito(){
 
         // Llamamos a la función precioTotalVenta para actualizar el precio total de la venta
         precioTotalVenta(arrayProductoCantidad);
-
-        return arrayProductoCantidad;
     });
 }
 

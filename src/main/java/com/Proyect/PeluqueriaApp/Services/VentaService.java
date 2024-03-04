@@ -39,20 +39,10 @@ public class VentaService {
 		ventaRepository.deleteById(id);
 	}
 	*/
-	
-	// Eliminar/Ocultar Venta
-	//public void eliminarOcultarVentaById(Long id) {
-	//	ventaRepository.eliminarOcultarVentaById(id);
-	//}
 
 	// Obtener todas las ventas con detalles
 	public List<VentaEntity> getAllVentasConDetalles() {
 		return ventaRepository.getAllVentasConDetalles();
 	}
 
-	/*
-	public List<VentaEntity> getVentaConProductosPorCliente(Long clienteId,Long ventaId) {
-		return (List<VentaEntity>) (List<VentaEntity>) ventaRepository.getVentaConProductosPorCliente(clienteId, ventaId);
-	}
-	*/
 }

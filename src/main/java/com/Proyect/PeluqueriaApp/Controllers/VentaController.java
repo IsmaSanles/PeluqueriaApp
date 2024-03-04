@@ -34,31 +34,17 @@ public class VentaController {
 		}
 	}
 
-	/*@GetMapping
-	public ResponseEntity<?> listarVentas() {
-		
-		List<VentaEntity> listadoVentas = ventaService.getAllVentasConDetalles();
-
-		if (listadoVentas.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-		} else {
-			return ResponseEntity.status(HttpStatus.OK).body(listadoVentas);
-		}
-	}
-	*/
-
-	/*
 	@GetMapping("/{id}")
-	public EstilistaEntity obtenerEstilistaPorId(@PathVariable Long id) {
-		Optional<EstilistaEntity> estilista = this.estilistaService.estilistaById(id);
-		
-		if (estilista.isPresent()) {
-			return estilista.get();
+	public ResponseEntity<VentaEntity> ventaById(@PathVariable Long id) {
+		Optional<VentaEntity> ventaOptional = this.ventaService.ventaById(id);
+
+		if (ventaOptional.isPresent()) {
+			return ResponseEntity.status(HttpStatus.OK).body(ventaOptional.get());
 		} else {
-			return null;
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 	}
-	*/
+
 	@PostMapping("/crear")
 	@Transactional(rollbackFor = Exception.class) // Rollback para cualquier excepción
 	public ResponseEntity<?> crearVenta(@Valid @RequestBody VentaEntity venta, BindingResult result) {
