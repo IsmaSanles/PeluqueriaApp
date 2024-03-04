@@ -34,9 +34,10 @@ public class VentaController {
 		}
 	}
 
+	// recupera todos los detalles pasándole el Id
 	@GetMapping("/{id}")
-	public ResponseEntity<VentaEntity> ventaById(@PathVariable Long id) {
-		Optional<VentaEntity> ventaOptional = this.ventaService.ventaById(id);
+	public ResponseEntity<VentaEntity> getVentaConDetallesPorId(@PathVariable Long id) {
+		Optional<VentaEntity> ventaOptional = this.ventaService.getVentaConDetallesPorId(id);
 
 		if (ventaOptional.isPresent()) {
 			return ResponseEntity.status(HttpStatus.OK).body(ventaOptional.get());
@@ -83,6 +84,7 @@ public class VentaController {
 
 	/*
 	@PutMapping("/{id}")
+	@Transactional(rollbackFor = Exception.class) // Rollback para cualquier excepción
     public ResponseEntity<?> modificarEstilista(@PathVariable Long id, @Valid @RequestBody EstilistaEntity nuevoEstilista, BindingResult result) {
 
         if (result.hasErrors()) {
@@ -109,6 +111,7 @@ public class VentaController {
     }
 
     @DeleteMapping("/{id}")
+    @Transactional(rollbackFor = Exception.class) // Rollback para cualquier excepción
     public ResponseEntity<?> eliminarEstilista(@PathVariable Long id) {
     	//Buscamos si existe ese usuario
     	EstilistaEntity estilistaRecuperado = obtenerEstilistaPorId(id);

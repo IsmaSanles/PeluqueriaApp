@@ -19,8 +19,8 @@ public class VentaService {
 	}
 	
 	// recuperar una Venta por Id
-	public Optional<VentaEntity> VentaById(Long Id){
-		return ventaRepository.findById(Id);
+	public Optional<VentaEntity> getVentaConDetallesPorId(Long Id){
+		return Optional.ofNullable(ventaRepository.getVentaConDetallesPorId(Id));
 	}
 	
 	// Crear Venta
