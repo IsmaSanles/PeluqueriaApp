@@ -34,31 +34,18 @@ public class VentaController {
 		}
 	}
 
-	/*@GetMapping
-	public ResponseEntity<?> listarVentas() {
-		
-		List<VentaEntity> listadoVentas = ventaService.getAllVentasConDetalles();
-
-		if (listadoVentas.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-		} else {
-			return ResponseEntity.status(HttpStatus.OK).body(listadoVentas);
-		}
-	}
-	*/
-
-	/*
+	// recupera todos los detalles pasándole el Id
 	@GetMapping("/{id}")
-	public EstilistaEntity obtenerEstilistaPorId(@PathVariable Long id) {
-		Optional<EstilistaEntity> estilista = this.estilistaService.estilistaById(id);
-		
-		if (estilista.isPresent()) {
-			return estilista.get();
+	public ResponseEntity<VentaEntity> getVentaConDetallesPorId(@PathVariable Long id) {
+		Optional<VentaEntity> ventaOptional = this.ventaService.getVentaConDetallesPorId(id);
+
+		if (ventaOptional.isPresent()) {
+			return ResponseEntity.status(HttpStatus.OK).body(ventaOptional.get());
 		} else {
-			return null;
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 	}
-	*/
+
 	@PostMapping("/crear")
 	@Transactional(rollbackFor = Exception.class) // Rollback para cualquier excepción
 	public ResponseEntity<?> crearVenta(@Valid @RequestBody VentaEntity venta, BindingResult result) {
@@ -68,7 +55,7 @@ public class VentaController {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
 			}
 
-			// Añadimos la fecha de Creación a la fecha de Venta
+			// Añadimos la fecha de Venta
 			venta.setFechaVenta(new Date());
 
 			// Añadimos la fecha de Creación a cada VentaProducto
@@ -84,8 +71,8 @@ public class VentaController {
 				ventaProducto.setVenta(nuevaVenta);
 			}
 
-			// guardamos con update y asi tenemos todos los datos
-			VentaEntity ventaGuardada = ventaService.modificarVenta(nuevaVenta);
+			// aquí añadimos el idVenta a los campos para la relación
+			VentaEntity ventaGuardada = ventaService.crearVenta(nuevaVenta);
 
 			return ResponseEntity.status(HttpStatus.OK).body(ventaGuardada);
 		} catch (Exception e) {
@@ -97,6 +84,7 @@ public class VentaController {
 
 	/*
 	@PutMapping("/{id}")
+	@Transactional(rollbackFor = Exception.class) // Rollback para cualquier excepción
     public ResponseEntity<?> modificarEstilista(@PathVariable Long id, @Valid @RequestBody EstilistaEntity nuevoEstilista, BindingResult result) {
 
         if (result.hasErrors()) {
@@ -123,6 +111,7 @@ public class VentaController {
     }
 
     @DeleteMapping("/{id}")
+    @Transactional(rollbackFor = Exception.class) // Rollback para cualquier excepción
     public ResponseEntity<?> eliminarEstilista(@PathVariable Long id) {
     	//Buscamos si existe ese usuario
     	EstilistaEntity estilistaRecuperado = obtenerEstilistaPorId(id);

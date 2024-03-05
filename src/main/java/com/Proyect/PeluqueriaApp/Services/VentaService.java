@@ -12,15 +12,15 @@ public class VentaService {
 
 	@Autowired
 	private IVentaRepository ventaRepository;
-	
-	// Listar Todos
-	public List<VentaEntity> listarVentas(){
-		return (List<VentaEntity>) ventaRepository.findAll();
+
+	// Obtener todas las ventas con sus detalles
+	public List<VentaEntity> getAllVentasConDetalles() {
+		return ventaRepository.getAllVentasConDetalles();
 	}
 	
-	// recuperar una Venta por Id
-	public Optional<VentaEntity> VentaById(Long Id){
-		return ventaRepository.findById(Id);
+	// recuperar una Venta por Id con sus detalles
+	public Optional<VentaEntity> getVentaConDetallesPorId(Long Id){
+		return Optional.ofNullable(ventaRepository.getVentaConDetallesPorId(Id));
 	}
 	
 	// Crear Venta
@@ -39,20 +39,5 @@ public class VentaService {
 		ventaRepository.deleteById(id);
 	}
 	*/
-	
-	// Eliminar/Ocultar Venta
-	//public void eliminarOcultarVentaById(Long id) {
-	//	ventaRepository.eliminarOcultarVentaById(id);
-	//}
 
-	// Obtener todas las ventas con detalles
-	public List<VentaEntity> getAllVentasConDetalles() {
-		return ventaRepository.getAllVentasConDetalles();
-	}
-
-	/*
-	public List<VentaEntity> getVentaConProductosPorCliente(Long clienteId,Long ventaId) {
-		return (List<VentaEntity>) (List<VentaEntity>) ventaRepository.getVentaConProductosPorCliente(clienteId, ventaId);
-	}
-	*/
 }
