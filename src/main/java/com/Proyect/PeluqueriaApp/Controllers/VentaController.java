@@ -55,7 +55,7 @@ public class VentaController {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
 			}
 
-			// Añadimos la fecha de Creación a la fecha de Venta
+			// Añadimos la fecha de Venta
 			venta.setFechaVenta(new Date());
 
 			// Añadimos la fecha de Creación a cada VentaProducto
@@ -71,8 +71,8 @@ public class VentaController {
 				ventaProducto.setVenta(nuevaVenta);
 			}
 
-			// guardamos con update y así tenemos todos los datos
-			VentaEntity ventaGuardada = ventaService.modificarVenta(nuevaVenta);
+			// aquí añadimos el idVenta a los campos para la relación
+			VentaEntity ventaGuardada = ventaService.crearVenta(nuevaVenta);
 
 			return ResponseEntity.status(HttpStatus.OK).body(ventaGuardada);
 		} catch (Exception e) {
