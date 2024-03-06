@@ -4,6 +4,7 @@ import com.Proyect.PeluqueriaApp.Entities.VentaProductoEntity;
 import com.Proyect.PeluqueriaApp.Services.VentaProductoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,7 @@ public class VentaProductoController {
 
 	@DeleteMapping("/{id}")
 	@Transactional(rollbackFor = Exception.class) // Rollback para cualquier excepción
+	@Modifying // Esto indica que vamos a realizar algún cambio en la BD como CREAR, MODIFICAR o ELIMINAR
 	public ResponseEntity<?> eliminarVentaProducto(@PathVariable Long id) {
 		// Buscamos si existe
 		Optional<VentaProductoEntity> ventaProductoOptional = ventaProductoService.getVentaProductoById(id);

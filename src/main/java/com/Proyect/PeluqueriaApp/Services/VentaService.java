@@ -17,7 +17,11 @@ public class VentaService {
 	public List<VentaEntity> getAllVentasConDetalles() {
 		return ventaRepository.getAllVentasConDetalles();
 	}
-	
+
+	public Optional<VentaEntity> getVentaById(Long Id){
+		return Optional.ofNullable(ventaRepository.getById(Id));
+	}
+
 	// recuperar una Venta por Id con sus detalles
 	public Optional<VentaEntity> getVentaConDetallesPorId(Long Id){
 		return Optional.ofNullable(ventaRepository.getVentaConDetallesPorId(Id));
@@ -32,12 +36,10 @@ public class VentaService {
 	public VentaEntity modificarVenta(VentaEntity venta) {
 		return ventaRepository.save(venta);
 	}
-		
-	/*
+
 	// Eliminar Venta
 	public void eliminarVenta(Long id) {
 		ventaRepository.deleteById(id);
 	}
-	*/
 
 }
