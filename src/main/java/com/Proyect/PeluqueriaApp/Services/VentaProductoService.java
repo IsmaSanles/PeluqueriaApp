@@ -13,12 +13,12 @@ public class VentaProductoService {
 	@Autowired
 	private IVentaProductoRepository ventaProductoRepository;
 
-	// recuperar un cliente por Id
+	// recuperar por Id
 	public Optional<VentaProductoEntity> getVentaProductoById(Long Id){
 		return ventaProductoRepository.findById(Id);
 	}
 
-	// Eliminar VentaProducto
+	// Eliminar
 	public void eliminarVentaProducto(Long id) {
 		ventaProductoRepository.deleteById(id);
 	}

@@ -3,6 +3,8 @@ package com.Proyect.PeluqueriaApp.Entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
@@ -18,7 +20,10 @@ public class VentaProductoEntity {
 	@Min(value = 1, message = "Indica la cantidad")
 	@Column(name="udsVendidas")
 	private int udsVendidas;
-	
+
+	@Column(name="precioVenta")
+	private BigDecimal precioVenta;
+
 	@Column(name="fechaCreacion", nullable = false)
 	private Date fechaCreacion;
 	
@@ -85,5 +90,13 @@ public class VentaProductoEntity {
 
 	public void setProducto(ProductoEntity producto) {
 		this.producto = producto;
+	}
+
+	public BigDecimal getPrecioVenta() {
+		return precioVenta;
+	}
+
+	public void setPrecioVenta(BigDecimal precioVenta) {
+		this.precioVenta = precioVenta;
 	}
 }

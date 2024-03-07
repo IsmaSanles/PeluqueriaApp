@@ -1,7 +1,9 @@
 package com.Proyect.PeluqueriaApp.Controllers;
 
+import com.Proyect.PeluqueriaApp.Entities.ProductoEntity;
 import com.Proyect.PeluqueriaApp.Entities.VentaEntity;
 import com.Proyect.PeluqueriaApp.Entities.VentaProductoEntity;
+import com.Proyect.PeluqueriaApp.Services.ProductoService;
 import com.Proyect.PeluqueriaApp.Services.VentaProductoService;
 import com.Proyect.PeluqueriaApp.Services.VentaService;
 import jakarta.validation.Valid;
@@ -25,6 +27,8 @@ public class VentaController {
 	private VentaService ventaService;
 	@Autowired
 	private VentaProductoService ventaProductoService;
+	@Autowired
+	private ProductoService productoService;
 
 	@GetMapping
 	public ResponseEntity<?> listarVentas() {
@@ -55,6 +59,8 @@ public class VentaController {
 	@Modifying // Esto indica que vamos a realizar algún cambio en la BD como CREAR, MODIFICAR o ELIMINAR
 	public ResponseEntity<?> crearVenta(@Valid @RequestBody VentaEntity venta, BindingResult result) {
 		try {
+
+
 			if (result.hasErrors()) {
 				// Manejar los errores de validación y devolverlos como parte de la respuesta HTTP
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
@@ -65,7 +71,17 @@ public class VentaController {
 
 			// Añadimos la fecha de Creación a cada VentaProducto
 			for (VentaProductoEntity ventaProducto : venta.getProductosVendidos()) {
+				// seteamos la fecha de creación
 				ventaProducto.setFechaCreacion(new Date());
+
+				// ahora recuperamos los datos del producto por su Id y asignamos el precio en el momento de la venta
+				Optional<ProductoEntity> productoOptional = productoService.productoById(ventaProducto.getProducto().getProductoId());
+				if (productoOptional.isPresent()) {
+					// Si el producto fue encontrado, accedemos a el
+					ProductoEntity producto = productoOptional.get();
+					// añadimos el precio del producto en el momento de la venta al campo precioVenta
+					ventaProducto.setPrecioVenta(producto.getPrecio());
+				}
 			}
 
 			// crear la venta
