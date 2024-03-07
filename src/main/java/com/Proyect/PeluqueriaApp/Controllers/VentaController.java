@@ -2,9 +2,11 @@ package com.Proyect.PeluqueriaApp.Controllers;
 
 import com.Proyect.PeluqueriaApp.Entities.VentaEntity;
 import com.Proyect.PeluqueriaApp.Entities.VentaProductoEntity;
+import com.Proyect.PeluqueriaApp.Services.VentaProductoService;
 import com.Proyect.PeluqueriaApp.Services.VentaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,8 @@ public class VentaController {
 	
 	@Autowired
 	private VentaService ventaService;
+	@Autowired
+	private VentaProductoService ventaProductoService;
 
 	@GetMapping
 	public ResponseEntity<?> listarVentas() {
@@ -48,6 +52,7 @@ public class VentaController {
 
 	@PostMapping("/crear")
 	@Transactional(rollbackFor = Exception.class) // Rollback para cualquier excepción
+	@Modifying // Esto indica que vamos a realizar algún cambio en la BD como CREAR, MODIFICAR o ELIMINAR
 	public ResponseEntity<?> crearVenta(@Valid @RequestBody VentaEntity venta, BindingResult result) {
 		try {
 			if (result.hasErrors()) {
@@ -109,22 +114,29 @@ public class VentaController {
 	    	return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
-
+	*/
     @DeleteMapping("/{id}")
     @Transactional(rollbackFor = Exception.class) // Rollback para cualquier excepción
-    public ResponseEntity<?> eliminarEstilista(@PathVariable Long id) {
-    	//Buscamos si existe ese usuario
-    	EstilistaEntity estilistaRecuperado = obtenerEstilistaPorId(id);
-    	
-    	if(estilistaRecuperado != null && estilistaRecuperado.isDeAlta() == true) {
-    		this.estilistaService.eliminarOcultarEstilistaById(id);
-            return ResponseEntity.status(HttpStatus.OK).body(estilistaRecuperado);
-    	}else if(estilistaRecuperado != null && estilistaRecuperado.isDeAlta() == false) {
-    		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(estilistaRecuperado);
-    	}else {
-    		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-    	}
+    @Modifying // Esto indica que vamos a realizar algún cambio en la BD como CREAR, MODIFICAR o ELIMINAR
+    public ResponseEntity<?> eliminarVenta(@PathVariable Long id) {
+    	// Buscamos si existe esa venta con sus datos
+		Optional<VentaEntity> ventaOptional = this.ventaService.getVentaConDetallesPorId(id);
+
+		if (ventaOptional.isPresent()) {
+			// borramos cada ventaProducto con un bucle
+			Long ventaProductoId;
+			for(VentaProductoEntity ventaProducto : ventaOptional.get().getProductosVendidos()){
+				ventaProductoId = ventaProducto.getVentaProductoId();
+				this.ventaProductoService.eliminarVentaProducto(ventaProductoId);
+			}
+
+			// ahora borramos la venta definitivamente
+			this.ventaService.eliminarVenta(id);
+
+			return ResponseEntity.status(HttpStatus.OK).body("Venta eliminada exitosamente.");
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
     }
-    */
 
 }

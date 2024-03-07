@@ -1,4 +1,4 @@
- var arrayProductoCantidad;
+var arrayProductoCantidad;
 $(document).ready(function () {
     // defino variable global
     arrayProductoCantidad = [];
@@ -13,6 +13,9 @@ $(document).ready(function () {
     $("#btnCrear").on("click", function() {
         crearVenta();
     });
+
+    // eliminar
+    btnEliminarVenta();
 });
 
 function abrirModalCrear() {
@@ -45,9 +48,8 @@ function listarVentas() {
                 let totalVenta = 0; // Variable para almacenar el total de la venta
                 // Itera sobre la lista de productos de esta venta
                 venta.productosVendidos.forEach(function(objeto) {
-                    // Agrega cada producto como una fila en la celda
+                    // Agrega cada producto como una fila en la celda y las unidades compradas
                     productosHtml += `<span>${objeto.producto.nombre}</span><br>`;
-
                     udsVentaHtml += `<span>${objeto.udsVendidas}</span><br>`;
                     // Calcula el precio total del producto (cantidad * precio) y suma al total de la venta
                     totalVenta += objeto.udsVendidas * objeto.producto.precio;
@@ -73,10 +75,10 @@ function listarVentas() {
                     </td>
                     <td>${totalVenta.toFixed(2)}</td> <!-- Muestra el total de la venta -->
                     <td class="d-flex">
-                        <button class="btn btn-primary mr-2 editarVentaBtn" data-estilista-id="${venta.ventaId}">
+                        <button class="btn btn-primary mr-2 editarVentaBtn" data-venta-id="${venta.ventaId}">
                             <i class="bi bi-pencil-square"></i>
                         </button>
-                        <button class="btn btn-danger eliminarVentaBtn" data-estilista-id="${venta.ventaId}">
+                        <button class="btn btn-danger eliminarVentaBtn" data-venta-id="${venta.ventaId}">
                             <i class="bi bi-trash"></i>
                         </button>
                     </td>
@@ -383,4 +385,49 @@ function precioTotalVenta(array){
     $('#precioTotalVenta span').css('font-size', '20px');
 }
 
+function btnEliminarVenta() {
+    // Utiliza la delegación de eventos para manejar el clic en los botones de eliminar venta
+    $(document).on('click', '.eliminarVentaBtn', function() {
+        // Obtener el id de la venta que se va a eliminar del atributo data-venta-id del botón
+        var ventaId = $(this).data('venta-id');
+        //console.log('Venta a eliminar con ID: '+ ventaId);
 
+        // Mensaje de confirmación con SweetAlert2
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: 'Esta acción eliminará permanentemente la venta. ¿Estás seguro de que deseas continuar?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#00a33d',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar venta',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Realizar una petición AJAX para eliminar la venta
+                $.ajax({
+                    url: 'http://localhost:8001/ventas/' + ventaId, // Ruta donde se encuentra el controlador para eliminar la venta
+                    type: 'DELETE',
+                    success: function (response) {
+                        // Mostrar mensaje de éxito con Toastr
+                        toastr.success("Venta eliminada con éxito");
+
+                        // Recargar la página después de 1 segundo
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+                    },
+                    error: function (xhr, status, error) {
+                        // Manejar el error si la venta no se pudo eliminar
+                        Swal.fire(
+                            'Error',
+                            'Ocurrió un error al intentar eliminar la venta.',
+                            'error'
+                        );
+                        console.error(xhr.responseText);
+                    }
+                });
+            }
+        });
+    });
+}
