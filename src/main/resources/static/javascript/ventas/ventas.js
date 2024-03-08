@@ -159,7 +159,16 @@ function crearVenta() {
                 }, 1000);
             },
             error: function (xhr, status, error) {
-                toastr.error('Ha ocurrido un error al intentar crear la venta');
+                // Manejar errores de la solicitud HTTP
+                console.error('Error al hacer la solicitud:', error);
+
+                // Verificar si el error es debido a falta de stock
+                if (xhr.status === 409) {
+                    toastr.error("No hay suficiente stock para completar la venta");
+                } else {
+                    // Si el error no es de falta de stock, mostrar un mensaje de error genérico
+                    toastr.error('Error al crear la venta: ' + error.message);
+                }
             }
         });
     }

@@ -59,8 +59,6 @@ public class VentaController {
 	@Modifying // Esto indica que vamos a realizar algún cambio en la BD como CREAR, MODIFICAR o ELIMINAR
 	public ResponseEntity<?> crearVenta(@Valid @RequestBody VentaEntity venta, BindingResult result) {
 		try {
-
-
 			if (result.hasErrors()) {
 				// Manejar los errores de validación y devolverlos como parte de la respuesta HTTP
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
@@ -69,37 +67,55 @@ public class VentaController {
 			// Añadimos la fecha de Venta
 			venta.setFechaVenta(new Date());
 
-			// Añadimos la fecha de Creación a cada VentaProducto
+			// Verificar disponibilidad de stock para todos los productos vendidos en la venta
+			boolean suficienteStock = true;
 			for (VentaProductoEntity ventaProducto : venta.getProductosVendidos()) {
-				// seteamos la fecha de creación
-				ventaProducto.setFechaCreacion(new Date());
-
-				// ahora recuperamos los datos del producto por su Id y asignamos el precio en el momento de la venta
 				Optional<ProductoEntity> productoOptional = productoService.productoById(ventaProducto.getProducto().getProductoId());
 				if (productoOptional.isPresent()) {
-					// Si el producto fue encontrado, accedemos a el
 					ProductoEntity producto = productoOptional.get();
-					// añadimos el precio del producto en el momento de la venta al campo precioVenta
-					ventaProducto.setPrecioVenta(producto.getPrecio());
+					if (producto.getStock() < ventaProducto.getUdsVendidas()) {
+						suficienteStock = false;
+						break;
+					}
+				} else {
+					suficienteStock = false;
+					break;
 				}
 			}
 
-			// crear la venta
-			VentaEntity nuevaVenta = ventaService.crearVenta(venta);
+			if (!suficienteStock) {
+				// Manejar la falta de stock y devolver una respuesta adecuada 409
+				return ResponseEntity.status(HttpStatus.CONFLICT).build();
+			}
 
-			// indicamos en cada producto vendido el Id de la venta que le corresponde
+			// Actualizar el stock de los productos vendidos
+			for (VentaProductoEntity ventaProducto : venta.getProductosVendidos()) {
+				// añadimos la fecha de creación a cada venta producto
+				ventaProducto.setFechaCreacion(new Date());
+				// recupero el producto por su ID
+				Optional<ProductoEntity> productoOptional = productoService.productoById(ventaProducto.getProducto().getProductoId());
+				if (productoOptional.isPresent()) {
+					ProductoEntity producto = productoOptional.get();
+					// guardo el valor del precio que tiene el producto en el momento de la venta
+					ventaProducto.setPrecioVenta(producto.getPrecio());
+					// modifico el stock tras la venta
+					int stock = producto.getStock() - ventaProducto.getUdsVendidas();
+					producto.setStock(stock);
+				}
+			}
+
+			// Crear la venta y asignar el ID de venta a los productos vendidos
+			VentaEntity nuevaVenta = ventaService.crearVenta(venta);
 			for (VentaProductoEntity ventaProducto : venta.getProductosVendidos()) {
 				ventaProducto.setVenta(nuevaVenta);
 			}
 
-			// aquí añadimos el idVenta a los campos para la relación
-			VentaEntity ventaGuardada = ventaService.crearVenta(nuevaVenta);
-
-			return ResponseEntity.status(HttpStatus.OK).body(ventaGuardada);
+			// Devolver una respuesta exitosa
+			return ResponseEntity.status(HttpStatus.OK).body(nuevaVenta);
 		} catch (Exception e) {
 			// Manejar cualquier excepción que ocurra durante el proceso
 			System.err.println("ERROR en el controlador CrearVenta: " + e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear la venta");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 
