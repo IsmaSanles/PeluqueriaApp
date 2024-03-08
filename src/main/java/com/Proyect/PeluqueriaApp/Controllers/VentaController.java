@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Comparator;
+
 
 @CrossOrigin(origins = "http://localhost:8001") // para que no dea problemas de CORS policy
 @RestController
@@ -35,8 +37,11 @@ public class VentaController {
 
 		List<VentaEntity> listadoVentas = ventaService.getAllVentasConDetalles();
 
+		// Ordenar las ventas por fecha de manera descendente
+		listadoVentas.sort(Comparator.comparing(VentaEntity::getFechaVenta).reversed());
+
 		if (listadoVentas.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron datos en la Base de Datos");
 		} else {
 			return ResponseEntity.status(HttpStatus.OK).body(listadoVentas);
 		}
@@ -85,7 +90,7 @@ public class VentaController {
 
 			if (!suficienteStock) {
 				// Manejar la falta de stock y devolver una respuesta adecuada 409
-				return ResponseEntity.status(HttpStatus.CONFLICT).build();
+				return ResponseEntity.status(HttpStatus.CONFLICT).body("No hay suficiente stock para completar la venta");
 			}
 
 			// Actualizar el stock de los productos vendidos
@@ -151,23 +156,31 @@ public class VentaController {
     @Transactional(rollbackFor = Exception.class) // Rollback para cualquier excepción
     @Modifying // Esto indica que vamos a realizar algún cambio en la BD como CREAR, MODIFICAR o ELIMINAR
     public ResponseEntity<?> eliminarVenta(@PathVariable Long id) {
-    	// Buscamos si existe esa venta con sus datos
+
+		// Buscamos si existe esa venta con sus datos
 		Optional<VentaEntity> ventaOptional = this.ventaService.getVentaConDetallesPorId(id);
 
 		if (ventaOptional.isPresent()) {
-			// borramos cada ventaProducto con un bucle
-			Long ventaProductoId;
-			for(VentaProductoEntity ventaProducto : ventaOptional.get().getProductosVendidos()){
-				ventaProductoId = ventaProducto.getVentaProductoId();
-				this.ventaProductoService.eliminarVentaProducto(ventaProductoId);
+			try {
+				// borramos cada ventaProducto con un bucle
+				Long ventaProductoId;
+				for (VentaProductoEntity ventaProducto : ventaOptional.get().getProductosVendidos()) {
+					// antes de eliminar cada ventaProducto debemos actualizar el stock del Producto
+					ventaProducto.getProducto().setStock(ventaProducto.getUdsVendidas() + ventaProducto.getProducto().getStock());
+
+					ventaProductoId = ventaProducto.getVentaProductoId();
+					this.ventaProductoService.eliminarVentaProducto(ventaProductoId);
+				}
+				// ahora borramos la venta definitivamente
+				this.ventaService.eliminarVenta(id);
+
+				return ResponseEntity.status(HttpStatus.OK).body("Venta eliminada exitosamente.");
+			}catch (Exception e) {
+				System.err.println("Error al eliminar la venta: " + e.getMessage());
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 			}
-
-			// ahora borramos la venta definitivamente
-			this.ventaService.eliminarVenta(id);
-
-			return ResponseEntity.status(HttpStatus.OK).body("Venta eliminada exitosamente.");
 		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Venta no encontrada en la Base de Datos");
 		}
     }
 
