@@ -68,12 +68,12 @@ function listarVentas() {
                         <ul style="list-style-type: none; padding: 0; margin: 0;">`;
                             // Itera sobre la lista de productos de esta venta para mostrar los precios individuales
                             venta.productosVendidos.forEach(function(objeto) {
-                                content += `<li>${objeto.producto.precio.toFixed(2)}</li>`;
+                                content += `<li>${objeto.producto.precio.toFixed(2)} €</li>`;
                             });
                             content += `
                         </ul>
                     </td>
-                    <td>${totalVenta.toFixed(2)}</td> <!-- Muestra el total de la venta -->
+                    <td>${totalVenta.toFixed(2)} €</td> <!-- Muestra el total de la venta -->
                     <td class="d-flex">
                         <button class="btn btn-primary mr-2 editarVentaBtn" data-venta-id="${venta.ventaId}">
                             <i class="bi bi-pencil-square"></i>
@@ -159,7 +159,16 @@ function crearVenta() {
                 }, 1000);
             },
             error: function (xhr, status, error) {
-                toastr.error('Ha ocurrido un error al intentar crear la venta');
+                // Manejar errores de la solicitud HTTP
+                console.error('Error al hacer la solicitud:', error);
+
+                // Verificar si el error es debido a falta de stock
+                if (xhr.status === 409) {
+                    toastr.error("No hay suficiente stock para completar la venta");
+                } else {
+                    // Si el error no es de falta de stock, mostrar un mensaje de error genérico
+                    toastr.error('Error al crear la venta: ' + error.message);
+                }
             }
         });
     }
@@ -389,8 +398,7 @@ function btnEliminarVenta() {
     // Utiliza la delegación de eventos para manejar el clic en los botones de eliminar venta
     $(document).on('click', '.eliminarVentaBtn', function() {
         // Obtener el id de la venta que se va a eliminar del atributo data-venta-id del botón
-        var ventaId = $(this).data('venta-id');
-        //console.log('Venta a eliminar con ID: '+ ventaId);
+        let ventaId = $(this).data('venta-id');
 
         // Mensaje de confirmación con SweetAlert2
         Swal.fire({
@@ -418,12 +426,7 @@ function btnEliminarVenta() {
                         }, 1000);
                     },
                     error: function (xhr, status, error) {
-                        // Manejar el error si la venta no se pudo eliminar
-                        Swal.fire(
-                            'Error',
-                            'Ocurrió un error al intentar eliminar la venta.',
-                            'error'
-                        );
+                        toastr.error("Ocurrió un error al intentar eliminar la venta");
                         console.error(xhr.responseText);
                     }
                 });

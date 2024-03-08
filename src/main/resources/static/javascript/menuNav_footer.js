@@ -5,7 +5,7 @@ const footer = $("footer");
 header.html( `
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333; padding-bottom:15px; padding-top:15px; font-family: Verdana; font-size:18px;">
     <div class="container">
-        <a class="navbar-brand" href="#">Peluquería Zitane</a>
+        <a class="navbar-brand" href="#">Gestión App</a>
         
         <!-- Botón de hamburguesa para pantallas pequeñas -->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
