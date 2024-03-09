@@ -3,6 +3,7 @@ package com.Proyect.PeluqueriaApp.Controllers;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,10 +37,15 @@ public class ProductoController {
 
 		List<ProductoEntity> listarProductosDeAlta = this.productoService.listarProductosDeAlta();
 
+		// Filtrar los productos cuyo stock no sea cero usando una expresión lambda
+		List<ProductoEntity> productosConStock = listarProductosDeAlta.stream()
+				.filter(producto -> producto.getStock() > 0)
+				.collect(Collectors.toList());
+
 		if (listarProductosDeAlta.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		} else {
-			return ResponseEntity.status(HttpStatus.OK).body(listarProductosDeAlta);
+			return ResponseEntity.status(HttpStatus.OK).body(productosConStock);
 		}
 	}
 

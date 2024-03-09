@@ -52,23 +52,23 @@ function listarVentas() {
                     productosHtml += `<span>${objeto.producto.nombre}</span><br>`;
                     udsVentaHtml += `<span>${objeto.udsVendidas}</span><br>`;
                     // Calcula el precio total del producto (cantidad * precio) y suma al total de la venta
-                    totalVenta += objeto.udsVendidas * objeto.producto.precio;
+                    totalVenta += objeto.udsVendidas * objeto.precioVenta;
                 });
                 // Construye la fila de la tabla con los datos de la venta
                 content += `
                 <tr>
-                    <td>${formatoFecha(venta.fechaVenta)}</td>
-                    <td>${formatoHora(venta.fechaVenta)}</td>
+                    <td>${venta.cliente.dni}</td>
                     <td>${venta.cliente.nombre}</td>
                     <td>${venta.cliente.apellido1}</td>
-                    <td>${venta.cliente.dni}</td>
+                    <td>${venta.fechaVenta}</td>
+                    <td>${formatoHora(venta.fechaVenta)}</td>
                     <td>${productosHtml}</td> <!-- Aquí se insertan los productos -->
                     <td>${udsVentaHtml}</td> <!-- Aquí se insertan las udsVenta -->
                     <td>
                         <ul style="list-style-type: none; padding: 0; margin: 0;">`;
                             // Itera sobre la lista de productos de esta venta para mostrar los precios individuales
                             venta.productosVendidos.forEach(function(objeto) {
-                                content += `<li>${objeto.producto.precio.toFixed(2)} €</li>`;
+                                content += `<li>${objeto.precioVenta} €</li>`;
                             });
                             content += `
                         </ul>
@@ -91,9 +91,26 @@ function listarVentas() {
 			    ...dataTableOptions,
 			    columnDefs: [
 			        { className: "text-center", targets: "_all"}, // centramos todos los textos de las columnas
-			        { orderable: false, targets: "_all" } // Deshabilita el filtrado para todas las columnas
-			    ]
+			        { orderable: false, targets: "_all" }, // Deshabilita el filtrado para todas las columnas
+			        { type: 'date-eu', targets: 3 } // Define el tipo de ordenamiento como fecha (eu) para la columna de fecha (índice 3)
+                ]
 			});
+
+            // Obtener la instancia DataTable
+            let tablaVentas = $('#tablaVentas').DataTable();
+
+			// Obtener los datos de la columna fecha de venta, que son Date
+            let columnaData = tablaVentas.column(3).data();
+            // Verificar los datos antes del formateo
+            console.log('Datos antes del formateo:', columnaData);
+
+            // Formatear los objetos Date en el nuevo formato de fecha (por ejemplo, "dd/MM/yyyy")
+            let fechaFormateadaArray = columnaData.map(formatoFecha);
+            // Verificar los datos después del formateo
+            console.log('Datos después del formateo:', fechaFormateadaArray);
+
+            // Actualizar la columna con los nuevos valores formateados
+            tablaVentas.column(3).data(fechaFormateadaArray).draw();
 
         },
         error: function (error) {
@@ -203,6 +220,7 @@ function cargarClientes() {
         },
         error: function (error) {
             console.error("Error al cargar los clientes:", error);
+            toastr.error("Error al cargar los datos de los clientes en el desplegable");
         }
     });
 }
@@ -221,7 +239,7 @@ function cargarProductos() {
             $('#selectProductos').append(`<option selected disabled value="">Selecciona el producto</option>`);
             // Agregar las opciones de productos al selector correspondiente
             data.forEach(function (producto) {
-                $('#selectProductos').append(`<option value="${producto.productoId}">${producto.nombre}</option>`);
+                $('#selectProductos').append(`<option value="${producto.productoId}">${producto.nombre} (Stock: ${producto.stock})</option>`);
             });
 
             // Aplicar libreria 'Select2' al selector de productos
@@ -232,6 +250,7 @@ function cargarProductos() {
         },
         error: function (error) {
             console.error("Error al cargar los productos:", error);
+            toastr.error("Error al cargar los datos de los productos en el desplegable");
         }
     });
 }
