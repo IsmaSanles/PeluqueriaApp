@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -18,4 +20,7 @@ public interface IVentaRepository extends JpaRepository<VentaEntity, Long>{
     @Query("SELECT DISTINCT v FROM VentaEntity v JOIN FETCH v.cliente c JOIN FETCH v.productosVendidos pv JOIN FETCH pv.producto p WHERE v.ventaId = :ventaId")
     VentaEntity getVentaConDetallesPorId(@Param("ventaId") Long ventaId);
 
+    // Consulta para obtener todas las ventas de una fecha en concreto
+    @Query("SELECT v FROM VentaEntity v WHERE DATE(v.fechaVenta) = DATE(:fecha)")
+    List<VentaEntity> getAllVentasByFecha(@Param("fecha") Date fecha);
 }
