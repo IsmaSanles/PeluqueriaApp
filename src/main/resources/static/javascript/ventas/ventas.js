@@ -40,7 +40,7 @@ function listarVentas() {
 
             let content = ``;
             data.forEach(function (venta) {
-                //console.log('venta ' + JSON.stringify(venta)); // comprobar que llega
+                console.log('venta ' + JSON.stringify(venta.fechaVenta)); // comprobar que llega
 
                 // Crea una variable para almacenar los productos de esta venta y otra para las unidades
                 let productosHtml = '';
@@ -56,11 +56,11 @@ function listarVentas() {
                 });
                 // Construye la fila de la tabla con los datos de la venta
                 content += `
-                <tr>
+                <tr style="text-align:center">
                     <td>${venta.cliente.dni}</td>
                     <td>${venta.cliente.nombre}</td>
                     <td>${venta.cliente.apellido1}</td>
-                    <td>${venta.fechaVenta}</td>
+                    <td>${formatoFecha(venta.fechaVenta)}</td>
                     <td>${formatoHora(venta.fechaVenta)}</td>
                     <td>${productosHtml}</td> <!-- Aquí se insertan los productos -->
                     <td>${udsVentaHtml}</td> <!-- Aquí se insertan las udsVenta -->
@@ -68,7 +68,7 @@ function listarVentas() {
                         <ul style="list-style-type: none; padding: 0; margin: 0;">`;
                             // Itera sobre la lista de productos de esta venta para mostrar los precios individuales
                             venta.productosVendidos.forEach(function(objeto) {
-                                content += `<li>${objeto.precioVenta} €</li>`;
+                                content += `<li>${objeto.precioVenta.toFixed(2)} €</li>`;
                             });
                             content += `
                         </ul>
@@ -87,31 +87,13 @@ function listarVentas() {
             $("#tbodyVentas").html(content);
 
             // Inicializa el plugin DataTable con las opciones de configuración
-			$("#tablaVentas").DataTable({
+			/*$("#tablaVentas").DataTable({
 			    ...dataTableOptions,
 			    columnDefs: [
 			        { className: "text-center", targets: "_all"}, // centramos todos los textos de las columnas
-			        { orderable: false, targets: "_all" }, // Deshabilita el filtrado para todas las columnas
-			        { type: 'date-eu', targets: 3 } // Define el tipo de ordenamiento como fecha (eu) para la columna de fecha (índice 3)
-                ]
-			});
-
-            // Obtener la instancia DataTable
-            let tablaVentas = $('#tablaVentas').DataTable();
-
-			// Obtener los datos de la columna fecha de venta, que son Date
-            let columnaData = tablaVentas.column(3).data();
-            // Verificar los datos antes del formateo
-            console.log('Datos antes del formateo:', columnaData);
-
-            // Formatear los objetos Date en el nuevo formato de fecha (por ejemplo, "dd/MM/yyyy")
-            let fechaFormateadaArray = columnaData.map(formatoFecha);
-            // Verificar los datos después del formateo
-            console.log('Datos después del formateo:', fechaFormateadaArray);
-
-            // Actualizar la columna con los nuevos valores formateados
-            tablaVentas.column(3).data(fechaFormateadaArray).draw();
-
+			        { orderable: false, targets: "_all" } // Deshabilita el filtrado para todas las columnas
+			    ]
+			});*/
         },
         error: function (error) {
 			// En caso de error, ocultar la tabla y mostrar el mensaje de fallo
