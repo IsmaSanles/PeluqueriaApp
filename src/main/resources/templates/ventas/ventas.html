@@ -35,8 +35,25 @@
             </div>
             <hr>
 
+
             <div class="container my-4">
-                <button type="button" id="crearNuevaVenta" class="btn btn-primary btn-lg"><i class="bi bi-cart-plus"></i> Nueva Venta</button>
+                <div class="row">
+                    <div class="col-md-3">
+                        <button type="button" id="crearNuevaVenta" class="btn btn-primary btn-lg btn-block"><i class="bi bi-cart-fill"></i> Nueva Venta</button>
+                    </div>
+                    <div class="col-md-9">
+                        <form class="form-inline justify-content-end">
+                            <label class="sr-only" for="fechaVenta">Buscar por fecha:</label>
+                            <div class="input-group mb-2 mr-sm-2">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text"><i class="bi bi-calendar3"></i></div>
+                                </div>
+                                <input type="text" class="form-control" id="fechaVenta" placeholder="Buscar por fecha">
+                            </div>
+                            <button type="button" id="btnBuscarPorDia" class="btn btn-primary mb-2">Buscar</button>
+                        </form>
+                    </div>
+                </div>
             </div>
 
             <div class="container my-4">
@@ -51,7 +68,7 @@
                                 <th>Fecha</th>
                                 <th>Hora</th>
                                 <th>Productos</th>
-                                <th>Unidades venta</th>
+                                <th>Unidades</th>
                                 <th>Precio</th>
                                 <th>Total</th>
                                 <th>Acciones</th>

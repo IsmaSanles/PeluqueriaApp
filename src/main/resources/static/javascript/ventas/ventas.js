@@ -1,9 +1,10 @@
-var arrayProductoCantidad;
+var arrayProductoCantidad; // en esta variable se guardan los productos que se van a vender al crear una venta
 $(document).ready(function () {
     // defino variable global
     arrayProductoCantidad = [];
 
-    listarVentas();
+    //listarVentas();
+    listarVentasPorDia();
     abrirModalCrear();
 
     anadirProductosCarrito();
@@ -102,6 +103,93 @@ function listarVentas() {
         }
     });
 };
+
+function listarVentasPorDia(){
+    $('#fechaVenta').datepicker({
+        dateFormat: "dd/mm/yy",
+        changeYear: true, // permite seleccionar el año en un desplegable
+        yearRange: "c-100:c+0" // indicamos cuantos años podemos escoger en el pasado y cuantos al futuro (en este caso cero)
+    });
+
+    $('#btnBuscarPorDia').on("click", function() {
+        // recuperamos la fecha
+        let fechaVentaDia = $('#fechaVenta').val().trim();
+        // Convertir la fecha al formato 'YYYY-MM-DD' que es compatible con la base de datos
+        let fechaFormateada = fechaVentaDia.split('/').reverse().join('-');
+
+        $.ajax({
+            url: "http://localhost:8001/ventas/porFecha/" + fechaFormateada,
+            method: "GET",
+            dataType: "json",
+            success: function (data) {
+                // Limpia el cuerpo de la tabla
+                $('#tbodyVentas').empty();
+
+                let content = ``;
+                data.forEach(function (venta) {
+                    console.log('venta ' + JSON.stringify(venta.fechaVenta)); // comprobar que llega
+
+                    // Crea una variable para almacenar los productos de esta venta y otra para las unidades
+                    let productosHtml = '';
+                    let udsVentaHtml = '';
+                    let totalVenta = 0; // Variable para almacenar el total de la venta
+                    // Itera sobre la lista de productos de esta venta
+                    venta.productosVendidos.forEach(function(objeto) {
+                        // Agrega cada producto como una fila en la celda y las unidades compradas
+                        productosHtml += `<span>${objeto.producto.nombre}</span><br>`;
+                        udsVentaHtml += `<span>${objeto.udsVendidas}</span><br>`;
+                        // Calcula el precio total del producto (cantidad * precio) y suma al total de la venta
+                        totalVenta += objeto.udsVendidas * objeto.precioVenta;
+                    });
+                    // Construye la fila de la tabla con los datos de la venta
+                    content += `
+                    <tr style="text-align:center">
+                        <td>${venta.cliente.dni}</td>
+                        <td>${venta.cliente.nombre}</td>
+                        <td>${venta.cliente.apellido1}</td>
+                        <td>${formatoFecha(venta.fechaVenta)}</td>
+                        <td>${formatoHora(venta.fechaVenta)}</td>
+                        <td>${productosHtml}</td> <!-- Aquí se insertan los productos -->
+                        <td>${udsVentaHtml}</td> <!-- Aquí se insertan las udsVenta -->
+                        <td>
+                            <ul style="list-style-type: none; padding: 0; margin: 0;">`;
+                                // Itera sobre la lista de productos de esta venta para mostrar los precios individuales
+                                venta.productosVendidos.forEach(function(objeto) {
+                                    content += `<li>${objeto.precioVenta.toFixed(2)} €</li>`;
+                                });
+                                content += `
+                            </ul>
+                        </td>
+                        <td>${totalVenta.toFixed(2)} €</td> <!-- Muestra el total de la venta -->
+                        <td class="d-flex">
+                            <button class="btn btn-primary mr-2 editarVentaBtn" data-venta-id="${venta.ventaId}">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+                            <button class="btn btn-danger eliminarVentaBtn" data-venta-id="${venta.ventaId}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>`;
+                });
+                $("#tbodyVentas").html(content);
+
+                // Inicializa el plugin DataTable con las opciones de configuración
+                /*$("#tablaVentas").DataTable({
+                    ...dataTableOptions,
+                    columnDefs: [
+                        { className: "text-center", targets: "_all"}, // centramos todos los textos de las columnas
+                        { orderable: false, targets: "_all" } // Deshabilita el filtrado para todas las columnas
+                    ]
+                });*/
+            },
+            error: function (error) {
+                // En caso de error, ocultar la tabla y mostrar el mensaje de fallo
+                $("#tablaVentas").hide();
+                toastr.error("Hubo un error al cargar las Ventas");
+            }
+        });
+    });
+}
 
 // crear Nueva Venta
 function crearVenta() {

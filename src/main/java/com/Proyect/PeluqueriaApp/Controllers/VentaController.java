@@ -14,6 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -184,4 +188,26 @@ public class VentaController {
 		}
     }
 
+	@GetMapping("/porFecha/{fecha}")
+	public ResponseEntity<?> getAllVentasByFecha(@PathVariable String fecha) {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Date fechaDate = null;
+		try {
+			fechaDate = formatter.parse(fecha);
+
+			List<VentaEntity> listadoVentasPorFecha = ventaService.getAllVentasByFecha(fechaDate);
+
+			// Ordenar las ventas por fecha de manera descendente
+			listadoVentasPorFecha.sort(Comparator.comparing(VentaEntity::getFechaVenta).reversed());
+
+			if (listadoVentasPorFecha.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron datos en la Base de Datos");
+			} else {
+				return ResponseEntity.status(HttpStatus.OK).body(listadoVentasPorFecha);
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de fecha incorrecto");
+		}
+	}
 }
