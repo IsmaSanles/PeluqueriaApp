@@ -7,6 +7,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
+class MetodoPago {
+	public static final int TARJETA = 1;
+	public static final int EFECTIVO = 0;
+}
+
+
 @Entity
 @Table(name = "Ventas")
 public class VentaEntity {
@@ -19,9 +25,10 @@ public class VentaEntity {
 	@Column(name="fechaVenta", nullable = false)
 	private Date fechaVenta;
 
-	
-// ------------------------------------------------------- RELACIONES --------------------------------------------------------------
+	@Column(name="metodoPago")
+	private int metodoPago;
 
+	// ------------------------------------------------------- RELACIONES --------------------------------------------------------------
 	@ManyToOne
 	@JoinColumn(name = "clienteId") // Columna en la tabla Venta que referencia al cliente
 	private ClienteEntity cliente;
@@ -60,5 +67,13 @@ public class VentaEntity {
 
 	public void setProductosVendidos(List<VentaProductoEntity> productosVendidos) {
 		this.productosVendidos = productosVendidos;
+	}
+
+	public int getMetodoPago() {
+		return metodoPago;
+	}
+
+	public void setMetodoPago(int metodoPago) {
+		this.metodoPago = metodoPago;
 	}
 }

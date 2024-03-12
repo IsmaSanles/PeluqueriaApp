@@ -21,6 +21,26 @@
         <!-- SweetAlert2 CSS -->
         <link rel="stylesheet" href="../../static/recursosApp/sweetalert2.min.css">
 
+        <style>
+            /* Aplica estilos al contenedor de la tabla para que ocupe todo el ancho del body y deje un margen de 15px a cada lado */
+            .table-container {
+                width: calc(100% - 30px); /* Resta 30px del ancho total para dejar un margen de 15px a cada lado */
+                margin-left: 15px; /* Aplica un margen de 15px al lado izquierdo */
+                margin-right: 15px; /* Aplica un margen de 15px al lado derecho */
+            }
+
+            .total-venta {
+                margin-top: 10px; /* Margen superior para separar los elementos */
+            }
+
+            .total-venta strong {
+                font-weight: bold; /* Establecer negrita para el texto "Total efectivo" y "Total tarjeta" */
+            }
+
+            .total-venta-cantidad {
+                font-size: 25px;
+            }
+        </style>
     </head>
 
     <body style="height: auto;">
@@ -35,13 +55,12 @@
             </div>
             <hr>
 
-
-            <div class="container my-4">
+            <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-2 mb-2">
                         <button type="button" id="crearNuevaVenta" class="btn btn-primary btn-lg btn-block"><i class="bi bi-cart-fill"></i> Nueva Venta</button>
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-10">
                         <form class="form-inline justify-content-end">
                             <label class="sr-only" for="fechaVenta">Buscar por fecha:</label>
                             <div class="input-group mb-2 mr-sm-2">
@@ -56,7 +75,7 @@
                 </div>
             </div>
 
-            <div class="container my-4">
+            <div class="container-fluid table-container">
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <table id="tablaVentas" class="table table-striped">
@@ -70,6 +89,7 @@
                                 <th>Productos</th>
                                 <th>Unidades</th>
                                 <th>Precio</th>
+                                <th>Método de Pago</th>
                                 <th>Total</th>
                                 <th>Acciones</th>
                             </tr>
@@ -78,6 +98,21 @@
                                 <!-- Aquí se agregarán las filas con datos -->
                             </tbody>
                         </table>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="row justify-content-center mb-4">
+                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 text-center">
+                        <div id="precioTotalVentaEfectivo" class="total-venta">
+                            <!-- Aquí se agregarán los resultados -->
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 text-center">
+                        <div id="precioTotalVentaTarjeta" class="total-venta">
+                            <!-- Aquí se agregarán los resultados -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -97,12 +132,23 @@
                     <div class="modal-body">
                         <form class="needs-validation" novalidate>
 
-                            <!-- Primer select para seleccionar cliente -->
+
                             <div class="form-row">
+                                <!-- Primer select para seleccionar cliente -->
                                 <div class="form-group col-md-6 position-relative">
                                     <label for="cliente">Cliente *</label>
                                     <select class="form-control selectClientes" id="selectClientes" required>
                                         <!-- Agrega más opciones según sea necesario -->
+                                    </select>
+                                </div>
+                                <!-- Otro select para método de pago -->
+                                <div class="form-group col-md-3 ">
+                                    <label for="metodoPago">Método de pago *</label>
+                                    <select class="form-control selectMetodoPago" id="selectMetodoPago" required>
+                                        <!-- Aquí agregamos las opciones de pago -->
+                                        <option disabled selected>Selecciona un método ...</option>
+                                        <option value="0">Efectivo</option>
+                                        <option value="1">Tarjeta</option>
                                     </select>
                                 </div>
                             </div>
