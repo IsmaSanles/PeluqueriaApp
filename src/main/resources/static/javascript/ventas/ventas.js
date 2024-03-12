@@ -108,12 +108,22 @@ function listarVentasPorDia(){
     $('#fechaVenta').datepicker({
         dateFormat: "dd/mm/yy",
         changeYear: true, // permite seleccionar el año en un desplegable
+        changeMonth: true, // permite seleccionar el mes en un desplegable
         yearRange: "c-100:c+0" // indicamos cuantos años podemos escoger en el pasado y cuantos al futuro (en este caso cero)
     });
 
     $('#btnBuscarPorDia').on("click", function() {
         // recuperamos la fecha
         let fechaVentaDia = $('#fechaVenta').val().trim();
+
+        // si no ingresamos nada en el filtro, por defecto carga la fecha actual
+        if(fechaVentaDia === ''){
+            let fechaActual = new Date();
+            fechaVentaDia = formatoFecha(fechaActual);
+            $('#fechaVenta').val(formatoFecha(fechaActual)); // Establecemos la fecha actual en el campo de fecha
+            console.log('si el campo está vacio: ' + fechaVentaDia);
+        }
+
         // Convertir la fecha al formato 'YYYY-MM-DD' que es compatible con la base de datos
         let fechaFormateada = fechaVentaDia.split('/').reverse().join('-');
 
@@ -126,6 +136,9 @@ function listarVentasPorDia(){
                 $('#tbodyVentas').empty();
 
                 let content = ``;
+                let totalVentasEfectivo = 0;
+                let totalVentasTarjeta = 0;
+
                 data.forEach(function (venta) {
                     console.log('venta ' + JSON.stringify(venta.fechaVenta)); // comprobar que llega
 
@@ -155,12 +168,22 @@ function listarVentasPorDia(){
                             <ul style="list-style-type: none; padding: 0; margin: 0;">`;
                                 // Itera sobre la lista de productos de esta venta para mostrar los precios individuales
                                 venta.productosVendidos.forEach(function(objeto) {
-                                    content += `<li>${objeto.precioVenta.toFixed(2)} €</li>`;
+                                    content += `<li>${objeto.precioVenta.toFixed(2).replace('.',',')} €</li>`;
                                 });
                                 content += `
                             </ul>
-                        </td>
-                        <td>${totalVenta.toFixed(2)} €</td> <!-- Muestra el total de la venta -->
+                        </td>`;
+                        // Agregar la columna de método de pago
+                        if (venta.metodoPago === 1) {
+                            totalVentasTarjeta += totalVenta; // Suma el total de la venta a las ventas con tarjeta
+                            content += `<td><i class="bi bi-credit-card-fill"></i> Tarjeta</td>`;
+                        } else if (venta.metodoPago === 0) {
+                            totalVentasEfectivo += totalVenta; // Suma el total de la venta a las ventas en efectivo
+                            content += `<td><i class="bi bi-currency-exchange"></i> Efectivo</td>`;
+                        }
+
+                        content += `
+                        <td>${totalVenta.toFixed(2).replace('.',',')} €</td> <!-- Muestra el total de la venta -->
                         <td class="d-flex">
                             <button class="btn btn-primary mr-2 editarVentaBtn" data-venta-id="${venta.ventaId}">
                                 <i class="bi bi-pencil-square"></i>
@@ -171,22 +194,25 @@ function listarVentasPorDia(){
                         </td>
                     </tr>`;
                 });
+                // Establecer estilos para el texto y la variable
+                $('#precioTotalVentaEfectivo').html('<strong>Total efectivo: </strong> <span class="total-venta-cantidad">' + totalVentasEfectivo.toFixed(2).replace('.',',') + ' €</span>');
+                $('#precioTotalVentaTarjeta').html('<strong>Total tarjeta: </strong> <span class="total-venta-cantidad">' + totalVentasTarjeta.toFixed(2).replace('.',',') + ' €</span>');
+
                 $("#tbodyVentas").html(content);
 
-                // Inicializa el plugin DataTable con las opciones de configuración
-                /*$("#tablaVentas").DataTable({
-                    ...dataTableOptions,
-                    columnDefs: [
-                        { className: "text-center", targets: "_all"}, // centramos todos los textos de las columnas
-                        { orderable: false, targets: "_all" } // Deshabilita el filtrado para todas las columnas
-                    ]
-                });*/
             },
-            error: function (error) {
-                // En caso de error, ocultar la tabla y mostrar el mensaje de fallo
-                $("#tablaVentas").hide();
-                toastr.error("Hubo un error al cargar las Ventas");
-            }
+           error: function (xhr, status, error) {
+               if (xhr.status === 404) {
+                   toastr.error("No existen ventas asociadas a ese día");
+               } else if (xhr.status === 400) {
+                   toastr.error("La solicitud no se pudo procesar correctamente");
+               } else if (xhr.status === 500) {
+                   toastr.error("Error interno del servidor");
+               } else {
+                   // Si el error no es específico de los códigos 400, 404 o 500, muestro mensaje de error genérico
+                   toastr.error('Error al procesar la solicitud: ' + error);
+               }
+           }
         });
     });
 }
@@ -195,18 +221,27 @@ function listarVentasPorDia(){
 function crearVenta() {
     // Recuperamos los datos para enviar al backend
     let clienteId = $("#selectClientes").val();
-    console.log('clienteId: ' + clienteId, 'productos: ' + JSON.stringify(arrayProductoCantidad));
+    let metodoPago =  $("#selectMetodoPago").val();
+    console.log('clienteId: ' + clienteId, 'productos: ' + JSON.stringify(arrayProductoCantidad), 'metodo de pago: ' + metodoPago);
 
     // Limpiamos los mensajes de error
     $(".is-invalid").removeClass("is-invalid"); // Quitar clases de error de todos los campos
     $(".invalid-tooltip").remove(); // Quitar todos los mensajes de error
 
-    // Comprobamos si clienteId está vacío
+    // Comprobamos errores
     let errores = false;
 
+    // Comprobamos si clienteId está vacío
     if (!clienteId) {
         $("#selectClientes").addClass("is-invalid");
         $("#selectClientes").after('<div class="invalid-tooltip">Campo obligatorio</div>');
+        errores = true;
+    }
+
+    // Comprobamos si metodoPago está vacío
+    if (!metodoPago) {
+        $("#selectMetodoPago").addClass("is-invalid");
+        $("#selectMetodoPago").after('<div class="invalid-tooltip">Campo obligatorio</div>');
         errores = true;
     }
 
@@ -234,7 +269,8 @@ function crearVenta() {
             contentType: "application/json",
             data: JSON.stringify({
                 cliente: { clienteId: clienteId },
-                productosVendidos: productosVendidos
+                productosVendidos: productosVendidos,
+                metodoPago: metodoPago
             }),
             success: function (data) {
                 // Mostrar mensaje de éxito con Toastr
