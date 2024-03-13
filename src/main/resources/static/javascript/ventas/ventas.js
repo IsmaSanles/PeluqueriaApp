@@ -14,6 +14,9 @@ $(document).ready(function () {
         crearVenta();
     });
 
+    //editar venta
+    modificarVenta();
+
     // eliminar
     btnEliminarVenta();
 });
@@ -431,8 +434,7 @@ function anadirProductosCarrito(){
 
 // elimina el producto de la tabla del Modal crearVenta al pulsar el botón Eliminar
 function eliminarProductoCarrito(){
-
-     console.log('array eliminar: ' + JSON.stringify(arrayProductoCantidad));
+     //console.log('array eliminar: ' + JSON.stringify(arrayProductoCantidad));
 
     // Evento de clic para el botón de eliminar producto
     $('#tbodyProductosCarrito').on('click', '.btnEliminarProductoCarrito', function() {
@@ -506,5 +508,17 @@ function btnEliminarVenta() {
                 });
             }
         });
+    });
+}
+
+function modificarVenta(){
+    // Utiliza la delegación de eventos para manejar el clic en los botones de editar venta
+    $(document).on('click', '.editarVentaBtn', function () {
+        // Obtener el id de la venta que se va a eliminar del atributo data-venta-id del botón
+        let ventaId = $(this).data('venta-id');
+        console.log('idVenta: ' + ventaId);
+
+        $('#modalEditarVenta').modal('show');
+
     });
 }
