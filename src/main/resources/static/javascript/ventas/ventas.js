@@ -14,8 +14,13 @@ $(document).ready(function () {
         crearVenta();
     });
 
+    //editar venta
+    modificarVenta();
+
     // eliminar
     btnEliminarVenta();
+
+
 });
 
 function abrirModalCrear() {
@@ -170,7 +175,7 @@ function crearVenta() {
     // Recuperamos los datos para enviar al backend
     let clienteId = $("#selectClientes").val();
     let metodoPago =  $("#selectMetodoPago").val();
-    console.log('clienteId: ' + clienteId, 'productos: ' + JSON.stringify(arrayProductoCantidad), 'metodo de pago: ' + metodoPago);
+    //console.log('clienteId: ' + clienteId, 'productos: ' + JSON.stringify(arrayProductoCantidad), 'metodo de pago: ' + metodoPago);
 
     // Limpiamos los mensajes de error
     $(".is-invalid").removeClass("is-invalid"); // Quitar clases de error de todos los campos
@@ -289,18 +294,26 @@ function cargarProductos() {
 
             // Limpiar las opciones existentes en el selector de productos
             $('#selectProductos').empty();
+            $('#selectProductosEditar').empty();
             // Añadimos una opción para indicar al usuario que seleccione una option
             $('#selectProductos').append(`<option selected disabled value="">Selecciona el producto</option>`);
+            $('#selectProductosEditar').append(`<option selected disabled value="">Selecciona el producto</option>`);
             // Agregar las opciones de productos al selector correspondiente
             data.forEach(function (producto) {
                 $('#selectProductos').append(`<option value="${producto.productoId}">${producto.nombre} (Stock: ${producto.stock})</option>`);
+                $('#selectProductosEditar').append(`<option value="${producto.productoId}">${producto.nombre} (Stock: ${producto.stock})</option>`);
             });
-
-            // Aplicar libreria 'Select2' al selector de productos
+            // Aplicar libreria 'Select2' al selector de productos en ModalCrearVenta
             $('#selectProductos').select2({
                 dropdownParent: $('#modalCrearVenta'),
                 width: '100%'
             });
+            // Aplicar libreria 'Select2' al selector de productos en ModalEditarVenta
+            $('#selectProductosEditar').select2({
+                dropdownParent: $('#modalEditarVenta'),
+                width: '100%'
+            });
+
         },
         error: function (error) {
             console.error("Error al cargar los productos:", error);
@@ -431,8 +444,7 @@ function anadirProductosCarrito(){
 
 // elimina el producto de la tabla del Modal crearVenta al pulsar el botón Eliminar
 function eliminarProductoCarrito(){
-
-     console.log('array eliminar: ' + JSON.stringify(arrayProductoCantidad));
+     //console.log('array eliminar: ' + JSON.stringify(arrayProductoCantidad));
 
     // Evento de clic para el botón de eliminar producto
     $('#tbodyProductosCarrito').on('click', '.btnEliminarProductoCarrito', function() {
@@ -504,6 +516,78 @@ function btnEliminarVenta() {
                         console.error(xhr.responseText);
                     }
                 });
+            }
+        });
+    });
+}
+
+function modificarVenta() {
+
+    // Utiliza la delegación de eventos para manejar el clic en los botones de editar venta
+    $(document).on('click', '.editarVentaBtn', function () {
+        // Obtener el id de la venta que se va a eliminar del atributo data-venta-id del botón
+        let ventaId = $(this).data('venta-id');
+        $('#modalEditarVenta').modal('show');
+
+        // Variable para mantener un contador de filas agregadas
+        let contadorFilas = 0;
+
+        // recuperamos la venta
+        $.ajax({
+            url: "http://localhost:8001/ventas/" + ventaId,
+            method: "GET",
+            dataType: "json",
+            success: function (venta) {
+                console.log('Recupera del back la venta: ' + JSON.stringify(venta) );
+
+                contadorFilas++; // aumentamos el contador
+
+                // cubrimos el campo Cliente con los datos
+                $('#ventaClienteEditar').val(venta.cliente.dni.concat(' - ').concat(venta.cliente.nombre,' ', venta.cliente.apellido1,' ', venta.cliente.apellido2));
+                // cargamos todos los productos en el select
+                cargarProductos();
+//aqui estoy
+                // añadimos la fila, la cantidad, el productoId y el total al array
+                /*arrayProductoCantidad.push(
+                    {
+                        "fila": contadorFilas,
+                        "cantidad": cantidad,
+                        "producto": producto,
+                        "total": total
+                    }
+                );*/
+                //console.log('array añadir: ' + JSON.stringify(arrayProductoCantidad)); // para ver los datos del array
+
+                // Creamos la fila HTML con los datos del producto
+                let fila =
+                    `<tr data-fila="${contadorFilas}" style="text-align:center">
+                        <td>${producto.nombre}</td>
+                        <td>${cantidad}</td>
+                        <td>${producto.precio.toFixed(2)} €</td>
+                        <td>${total} €</td>
+                        <td><button class="btn btn-danger btnEliminarProductoCarrito" data-fila="${contadorFilas}"><i class="bi bi-x-circle"></i> Eliminar</button></td>
+                    </tr>`;
+
+                // añadimos la fila a la tabla
+                $('#tbodyProductosCarrito').append(fila);
+
+                // Limpiamos los campos después de agregar el producto al carrito
+                $("#cantidad").val("");
+                $("#selectProductos").val("").trigger("change");
+
+                // llamada al metodo para la suma total de la venta
+                precioTotalVenta(arrayProductoCantidad);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error al recuperar la venta: " + error);
+                let errorMessage = "Error al cargar los datos de la venta ";
+                if (xhr.status == 400) {
+                    errorMessage += "Error de solicitud. Por favor, verifique los datos enviados.";
+                } else if (xhr.status == 404) {
+                    errorMessage += "No se encontraron datos";
+                } else if (xhr.status == 500) {
+                    errorMessage += "Error interno del servidor. Por favor, inténtelo de nuevo más tarde.";
+                }
             }
         });
     });
