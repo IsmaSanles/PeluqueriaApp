@@ -144,6 +144,7 @@
                                     <label for="metodoPago">Método de pago *</label>
                                     <select class="form-control selectMetodoPago" id="selectMetodoPago" required>
                                         <!-- Aquí agregamos las opciones de pago -->
+                                        <option disabled selected>Selecciona un método ...</option>
                                         <option value="0">Efectivo</option>
                                         <option value="1">Tarjeta</option>
                                     </select>
@@ -219,17 +220,13 @@
                             <div class="form-row">
                                 <!-- Primer select para seleccionar cliente -->
                                 <div class="form-group col-md-6 position-relative">
-                                    <label for="cliente">Cliente *</label>
-                                    <select class="form-control selectClientes" id="selectClientes" required disabled>
-                                        <!-- Agrega más opciones según sea necesario -->
-                                    </select>
+                                    <label for="cliente">Cliente </label>
+                                    <input type="text" class="form-control" id="ventaClienteEditar" style="height:30px;" required disabled>
                                 </div>
                                 <!-- Otro select para método de pago -->
                                 <div class="form-group col-md-3 ">
                                     <label for="metodoPago">Método de pago *</label>
                                     <select class="form-control selectMetodoPago" id="selectMetodoPago" required>
-                                        <!-- Aquí agregamos las opciones de pago -->
-                                        <option disabled selected>Selecciona un método ...</option>
                                         <option value="0">Efectivo</option>
                                         <option value="1">Tarjeta</option>
                                     </select>
@@ -240,7 +237,7 @@
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label for="producto">Producto *</label>
-                                    <select class="form-control selectProductos" id="selectProductos" required>
+                                    <select class="form-control selectProductos" id="selectProductosEditar" required>
                                         <!-- Agrega más opciones según sea necesario -->
                                     </select>
                                 </div>
@@ -262,7 +259,7 @@
                         <div class="form-row">
                             <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                                 <table id="tablaProductosCarritoEditar" class="table table-striped">
-                                    <thead  id="theadProductosCarritoEditar">
+                                    <thead  id="theadProductosCarrito">
                                     <tr style="text-align:center">
                                         <th>Producto</th>
                                         <th>Cantidad</th>
@@ -271,14 +268,14 @@
                                         <th></th>
                                     </tr>
                                     </thead>
-                                    <tbody id="tbodyProductosCarritoEditar">
+                                    <tbody id="tbodyProductosCarrito">
                                     <!-- Aquí se agregarán las filas con datos -->
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                         <div class="row md-2 mr-5 justify-content-center" id="divTotalVentaEditar">
-                            <span id="precioTotalVentaEditar"></span>
+                            <span id="precioTotalVenta"></span>
                         </div>
                         <hr>
                     </div>
