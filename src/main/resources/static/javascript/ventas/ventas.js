@@ -1,7 +1,9 @@
 var arrayProductoCantidad; // en esta variable se guardan los productos que se van a vender al crear una venta
+var arrayProductoCantidadEditar;
 $(document).ready(function () {
     // defino variable global
     arrayProductoCantidad = [];
+    arrayProductoCantidadEditar = [];
 
     listarVentasPorDia();
     abrirModalCrear();
@@ -175,6 +177,11 @@ function crearVenta() {
     // Recuperamos los datos para enviar al backend
     let clienteId = $("#selectClientes").val();
     let metodoPago =  $("#selectMetodoPago").val();
+    // Aplicar libreria 'Select2' al selector de metodoPago en ModalCrearVenta
+    $('#selectMetodoPago').select2({
+        dropdownParent: $('#modalCrearVenta'),
+        width: '70%'
+    });
     //console.log('clienteId: ' + clienteId, 'productos: ' + JSON.stringify(arrayProductoCantidad), 'metodo de pago: ' + metodoPago);
 
     // Limpiamos los mensajes de error
@@ -447,7 +454,7 @@ function eliminarProductoCarrito(){
      //console.log('array eliminar: ' + JSON.stringify(arrayProductoCantidad));
 
     // Evento de clic para el botón de eliminar producto
-    $('#tbodyProductosCarrito').on('click', '.btnEliminarProductoCarrito', function() {
+    $('#tbodyProductosCarrito, #tbodyProductosCarritoEditar').on('click', '.btnEliminarProductoCarrito', function() {
 
         // Recuperamos el identificador único de la fila a eliminar
         let filaEliminar = $(this).data('fila');
@@ -456,12 +463,15 @@ function eliminarProductoCarrito(){
         // Buscamos la fila correspondiente y la eliminamos
         $(`tr[data-fila="${filaEliminar}"]`).remove();
 
-        // Eliminamos el elemento correspondiente del array
+        // Eliminamos el elemento correspondiente del array de Crear
         arrayProductoCantidad = arrayProductoCantidad.filter(item => item.fila !== filaEliminar);
-        console.log('array despues de eliminar: ' + JSON.stringify(arrayProductoCantidad));
+        // Eliminamos el elemento correspondiente del array de Editar
+        arrayProductoCantidadEditar = arrayProductoCantidadEditar.filter(item => item.fila !== filaEliminar);
+        console.log('array despues de eliminar: ' + JSON.stringify(arrayProductoCantidadEditar));
 
         // Llamamos a la función precioTotalVenta para actualizar el precio total de la venta
         precioTotalVenta(arrayProductoCantidad);
+        precioTotalVenta(arrayProductoCantidadEditar);
     });
 }
 
@@ -471,8 +481,11 @@ function precioTotalVenta(array){
     for(let x of array){
         totalVenta += parseFloat(x.total);
     }
-    // Establecer estilos para el texto y la variable
+    // Establecer estilos para el texto y la variable en CrearVenta
     $('#precioTotalVenta').html('<strong>Precio Total: </strong> <span style="font-size: 20px;">' + totalVenta.toFixed(2) + ' €</span>');
+
+    $('#precioTotalVentaEditar').html('<strong>Precio Total: </strong> <span style="font-size: 20px;">' + totalVenta.toFixed(2) + ' €</span>');
+
 
     // Establecer estilos adicionales para el texto y la variable
     $('#precioTotalVenta strong').css('font-weight', 'bold');
@@ -522,11 +535,11 @@ function btnEliminarVenta() {
 }
 
 function modificarVenta() {
-
     // Utiliza la delegación de eventos para manejar el clic en los botones de editar venta
     $(document).on('click', '.editarVentaBtn', function () {
         // Obtener el id de la venta que se va a eliminar del atributo data-venta-id del botón
         let ventaId = $(this).data('venta-id');
+        // abrimos el modal de Edición
         $('#modalEditarVenta').modal('show');
 
         // Variable para mantener un contador de filas agregadas
@@ -538,46 +551,62 @@ function modificarVenta() {
             method: "GET",
             dataType: "json",
             success: function (venta) {
-                console.log('Recupera del back la venta: ' + JSON.stringify(venta) );
+                console.log('Recupera del back la venta: ' + JSON.stringify(venta));
 
-                contadorFilas++; // aumentamos el contador
+                // cada vez que pulsamos en el boton de editar venta tenemos que limpiar el array
+                arrayProductoCantidadEditar = [];
 
-                // cubrimos el campo Cliente con los datos
-                $('#ventaClienteEditar').val(venta.cliente.dni.concat(' - ').concat(venta.cliente.nombre,' ', venta.cliente.apellido1,' ', venta.cliente.apellido2));
-                // cargamos todos los productos en el select
+                // cargamos el cliente en el campo correspondiente
+                $('#ventaClienteEditar').val(venta.cliente.dni.concat(' - ').concat(venta.cliente.nombre, ' ', venta.cliente.apellido1, ' ', venta.cliente.apellido2));
+                // añadimos la librería select2 al desplegable del metodoPago
+                $('#selectMetodoPagoEditar').select2({
+                    dropdownParent: $('#modalEditarVenta'),
+                    width: '70%'
+                });
+                // cubrimos el select con los datos que recuperamos de la venta
+                $('#selectMetodoPagoEditar').val(venta.metodoPago).trigger('change');
+                // cargamos los productos en el select
                 cargarProductos();
-//aqui estoy
-                // añadimos la fila, la cantidad, el productoId y el total al array
-                /*arrayProductoCantidad.push(
-                    {
+                // limpiamos el cuerpo de la tabla
+                $('#tbodyProductosCarritoEditar').empty();
+
+                // variable para el total de la venta
+                let totalVenta = 0;
+                // recorremos los productosVendidos
+                venta.productosVendidos.forEach(function (productoVendido) {
+                    contadorFilas++;
+                    let total = productoVendido.precioVenta * productoVendido.udsVendidas;
+                    totalVenta += total;
+
+                    // vamos creando cada fila de la tabla
+                    let fila =
+                        `<tr data-fila="${contadorFilas}" style="text-align:center">
+                            <td>${productoVendido.producto.nombre}</td>
+                            <td>${productoVendido.udsVendidas}</td>
+                            <td>${productoVendido.precioVenta.toFixed(2)} €</td>
+                            <td>${total.toFixed(2)} €</td>
+                            <td><button class="btn btn-danger btnEliminarProductoCarrito" data-fila="${contadorFilas}"><i class="bi bi-x-circle"></i> Eliminar</button></td>
+                        </tr>`;
+                    // añadimos la fila a la tabla
+                    $('#tbodyProductosCarritoEditar').append(fila);
+
+                    // guardamos en un arrayEditar los datos que recuperamos de la venta
+                    arrayProductoCantidadEditar.push({
                         "fila": contadorFilas,
-                        "cantidad": cantidad,
-                        "producto": producto,
-                        "total": total
-                    }
-                );*/
-                //console.log('array añadir: ' + JSON.stringify(arrayProductoCantidad)); // para ver los datos del array
+                        "cantidad": productoVendido.udsVendidas.toFixed(2),
+                        "producto": productoVendido.producto,
+                        "total": total.toFixed(2)
+                    });
+                    console.log('arrayEditar: ' + JSON.stringify(arrayProductoCantidadEditar));
+                });
+                // llamada a la función para mostrar el precio total de la venta
+                precioTotalVenta(arrayProductoCantidadEditar);
+                // llamada a la función para añadir productos al carrito de EditarVenta
+                anadirProductosCarritoEditar(contadorFilas);
 
-                // Creamos la fila HTML con los datos del producto
-                let fila =
-                    `<tr data-fila="${contadorFilas}" style="text-align:center">
-                        <td>${producto.nombre}</td>
-                        <td>${cantidad}</td>
-                        <td>${producto.precio.toFixed(2)} €</td>
-                        <td>${total} €</td>
-                        <td><button class="btn btn-danger btnEliminarProductoCarrito" data-fila="${contadorFilas}"><i class="bi bi-x-circle"></i> Eliminar</button></td>
-                    </tr>`;
+                // ahora recuperamos los datos que necesitamos enviar al back y enviamos por PUT con AJAX
 
-                // añadimos la fila a la tabla
-                $('#tbodyProductosCarrito').append(fila);
-
-                // Limpiamos los campos después de agregar el producto al carrito
-                $("#cantidad").val("");
-                $("#selectProductos").val("").trigger("change");
-
-                // llamada al metodo para la suma total de la venta
-                precioTotalVenta(arrayProductoCantidad);
-            },
+             },
             error: function (xhr, status, error) {
                 console.error("Error al recuperar la venta: " + error);
                 let errorMessage = "Error al cargar los datos de la venta ";
@@ -590,5 +619,94 @@ function modificarVenta() {
                 }
             }
         });
+    });
+}
+
+// función para añadir productos al carrito en la parte de EditarVenta
+function anadirProductosCarritoEditar(contadorFilasEditar){
+    // Variable para mantener un contador de filas agregadas
+     let contadorFilas = contadorFilasEditar;
+
+    // Evento de clic para el botón btnAnadirAlCarrito
+    $('#btnAnadirAlCarritoEditar').click(function() {
+
+        // Limpiamos los mensajes de error
+        $(".is-invalid").removeClass("is-invalid"); // Quitar clases de error de todos los campos
+        $(".invalid-tooltip").remove(); // Quitar todos los mensajes de error
+
+        // Recuperamos los datos
+        let cantidad = $("#cantidadEditar").val();
+        let productoId = $("#selectProductosEditar").val();
+
+        // Comprobamos si productoId y cantidad están vacíos
+        let errores = false;
+
+        if (!productoId) {
+            $("#selectProductosEditar").addClass("is-invalid");
+            $("#selectProductosEditar").after('<div class="invalid-tooltip">Campo obligatorio</div>');
+            errores = true;
+        }
+        if (!cantidad) {
+            $("#cantidadEditar").addClass("is-invalid");
+            $("#cantidadEditar").after('<div class="invalid-tooltip">Campo obligatorio</div>');
+            errores = true;
+        }
+
+        if(!errores){
+            // Realizamos una llamada AJAX para recuperar los datos del producto
+            $.ajax({
+                url: "http://localhost:8001/producto/" + productoId,
+                method: "GET",
+                dataType: "json",
+                success: function (producto) {
+                    // Calculamos el total
+                    let total = (producto.precio * cantidad).toFixed(2);
+
+                    contadorFilas++; // aumentamos el contador
+
+                    // añadimos la fila, la cantidad, el productoId y el total al array
+                    arrayProductoCantidadEditar.push(
+                        {
+                            "fila": contadorFilas,
+                            "cantidad": cantidad,
+                            "producto": producto,
+                            "total": total
+                        }
+                    );
+                    console.log('array añadir: ' + JSON.stringify(arrayProductoCantidadEditar)); // para ver los datos del array
+
+                    // Creamos la fila HTML con los datos del producto
+                    let fila =
+                        `<tr data-fila="${contadorFilas}" style="text-align:center">
+                            <td>${producto.nombre}</td>
+                            <td>${cantidad}</td>
+                            <td>${producto.precio.toFixed(2)} €</td>
+                            <td>${total} €</td>
+                            <td><button class="btn btn-danger btnEliminarProductoCarrito" data-fila="${contadorFilas}"><i class="bi bi-x-circle"></i> Eliminar</button></td>
+                        </tr>`;
+
+                    // añadimos la fila a la tabla
+                    $('#tbodyProductosCarritoEditar').append(fila);
+
+                    // Limpiamos los campos después de agregar el producto al carrito
+                    $("#cantidadEditar").val("");
+                    $("#selectProductosEditar").val("").trigger("change");
+
+                    // llamada al metodo para la suma total de la venta
+                    precioTotalVenta(arrayProductoCantidadEditar);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error al recuperar el producto: " + error);
+                    let errorMessage = "Error al cargar los datos del producto: ";
+                    if (xhr.status == 400) {
+                        errorMessage += "Error de solicitud. Por favor, verifique los datos enviados.";
+                    } else if (xhr.status == 404) {
+                        errorMessage += "No se encontraron datos.";
+                    } else if (xhr.status == 500) {
+                        errorMessage += "Error interno del servidor. Por favor, inténtelo de nuevo más tarde.";
+                    }
+                }
+            });
+        }
     });
 }
