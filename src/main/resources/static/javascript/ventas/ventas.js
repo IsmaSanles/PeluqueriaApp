@@ -1,7 +1,7 @@
 var arrayProductoCantidad; // en esta variable se guardan los productos que se van a vender al crear una venta
-var arrayProductoCantidadEditar;
+var arrayProductoCantidadEditar; // en esta variable se guardan los productos al editar una venta
 $(document).ready(function () {
-    // defino variable global
+    // defino variables globales
     arrayProductoCantidad = [];
     arrayProductoCantidadEditar = [];
 
@@ -15,14 +15,10 @@ $(document).ready(function () {
     $("#btnCrear").on("click", function() {
         crearVenta();
     });
-
     //editar venta
     modificarVenta();
-
     // eliminar
     btnEliminarVenta();
-
-
 });
 
 function abrirModalCrear() {
@@ -32,6 +28,11 @@ function abrirModalCrear() {
         // Cargar clientes y productos al abrir el modal de crear venta
         cargarClientes();
         cargarProductos();
+        // Aplicar libreria 'Select2' al selector de metodoPago en ModalCrearVenta
+        $('#selectMetodoPago').select2({
+            dropdownParent: $('#modalCrearVenta'),
+            width: '80%'
+        });
     });
 }
 
@@ -177,11 +178,6 @@ function crearVenta() {
     // Recuperamos los datos para enviar al backend
     let clienteId = $("#selectClientes").val();
     let metodoPago =  $("#selectMetodoPago").val();
-    // Aplicar libreria 'Select2' al selector de metodoPago en ModalCrearVenta
-    $('#selectMetodoPago').select2({
-        dropdownParent: $('#modalCrearVenta'),
-        width: '70%'
-    });
     //console.log('clienteId: ' + clienteId, 'productos: ' + JSON.stringify(arrayProductoCantidad), 'metodo de pago: ' + metodoPago);
 
     // Limpiamos los mensajes de error

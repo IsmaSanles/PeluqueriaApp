@@ -7,12 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
-class MetodoPago {
-	public static final int TARJETA = 1;
-	public static final int EFECTIVO = 0;
-}
-
-
 @Entity
 @Table(name = "Ventas")
 public class VentaEntity {
@@ -25,6 +19,7 @@ public class VentaEntity {
 	@Column(name="fechaVenta", nullable = false)
 	private Date fechaVenta;
 
+	@NotNull
 	@Column(name="metodoPago")
 	private int metodoPago;
 
