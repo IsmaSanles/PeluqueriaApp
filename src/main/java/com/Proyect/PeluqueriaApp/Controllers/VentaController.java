@@ -128,34 +128,19 @@ public class VentaController {
 		}
 	}
 
-	/*
 	@PutMapping("/{id}")
 	@Transactional(rollbackFor = Exception.class) // Rollback para cualquier excepción
-    public ResponseEntity<?> modificarEstilista(@PathVariable Long id, @Valid @RequestBody EstilistaEntity nuevoEstilista, BindingResult result) {
+	@Modifying // Esto indica que vamos a realizar algún cambio en la BD como CREAR, MODIFICAR o ELIMINAR
+    public ResponseEntity<?> modificarEstilista(@PathVariable Long id, @Valid @RequestBody VentaEntity venta, BindingResult result) {
 
-        if (result.hasErrors()) {
-            // Manejar los errores de validación y devolverlos como parte de la respuesta HTTP
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
-        }
+		if (result.hasErrors()) {
+			// Manejar los errores de validación y devolverlos como parte de la respuesta HTTP
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
+		}
 
-	    // Busco el estilista por el Id
-	    EstilistaEntity estilistaRecuperado = obtenerEstilistaPorId(id);
-
-	    if (estilistaRecuperado != null) {
-	        // añadimos los campos que no queremos que cambien
-	    	nuevoEstilista.setEstilistaId(estilistaRecuperado.getEstilistaId());
-	    	nuevoEstilista.setFechaModificacion(new Date());
-	    	nuevoEstilista.setFechaCreacion(estilistaRecuperado.getFechaCreacion());
-	    	
-	        // Guardo el estilista actualizado en el repositorio
-	        estilistaRecuperado = this.estilistaService.modificarEstilista(nuevoEstilista);
-	        
-	        return ResponseEntity.status(HttpStatus.OK).body(estilistaRecuperado);
-	    }else {
-	    	return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+		return ResponseEntity.status(HttpStatus.OK).body("Venta modificada con éxito");
     }
-	*/
+
     @DeleteMapping("/{id}")
     @Transactional(rollbackFor = Exception.class) // Rollback para cualquier excepción
     @Modifying // Esto indica que vamos a realizar algún cambio en la BD como CREAR, MODIFICAR o ELIMINAR
