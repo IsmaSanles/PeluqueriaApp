@@ -33,7 +33,7 @@ function listarServicios() {
                 content += `
                 <tr>
                     <td>${servicio.nombre}</td>
-                    <td>${servicio.precio} €</td>
+                    <td>${servicio.precio.toFixed(2).replace('.',',')} €</td>
                     <td>${servicio.duracion} min</td>
                     <td>${servicio.deAlta ? '<i class="bi bi-check-circle-fill text-success"></i>' : '<i class="bi bi-x-circle-fill text-danger"></i>'}</td>
                     <td>${servicio.descripcion}</td>
@@ -55,7 +55,7 @@ function listarServicios() {
 				...dataTableOptions,
 	            columnDefs: [
 					{ className: "text-center", targets: "_all" }, // centramos todos los textos de las columnas
-			        { targets: [3, 4, 5], orderable: false } // indicamos que las columnas definidas no puedan filtrar
+			        { orderable: false, targets: "_all" } // Deshabilita el filtrado para todas las columnas
 		    	]
 		    });
 

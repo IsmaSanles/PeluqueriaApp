@@ -311,12 +311,6 @@ function cargarProductos() {
                 dropdownParent: $('#modalCrearVenta'),
                 width: '100%'
             });
-            // Aplicar libreria 'Select2' al selector de productos en ModalEditarVenta
-            $('#selectProductosEditar').select2({
-                dropdownParent: $('#modalEditarVenta'),
-                width: '100%'
-            });
-
         },
         error: function (error) {
             console.error("Error al cargar los productos:", error);
@@ -463,11 +457,14 @@ function eliminarProductoCarrito(){
         arrayProductoCantidad = arrayProductoCantidad.filter(item => item.fila !== filaEliminar);
         // Eliminamos el elemento correspondiente del array de Editar
         arrayProductoCantidadEditar = arrayProductoCantidadEditar.filter(item => item.fila !== filaEliminar);
-        console.log('array despues de eliminar: ' + JSON.stringify(arrayProductoCantidadEditar));
+        //console.log('array despues de eliminar: ' + JSON.stringify(arrayProductoCantidadEditar));
 
         // Llamamos a la función precioTotalVenta para actualizar el precio total de la venta
         precioTotalVenta(arrayProductoCantidad);
         precioTotalVenta(arrayProductoCantidadEditar);
+
+        // cargamos en el select de productos los productos que no están en el carrito
+        cargarProductosEditarVenta();
     });
 }
 
@@ -547,22 +544,18 @@ function modificarVenta() {
             method: "GET",
             dataType: "json",
             success: function (venta) {
-                console.log('Recupera del back la venta: ' + JSON.stringify(venta));
+                //console.log('Recupera del back la venta: ' + JSON.stringify(venta));
 
                 // cada vez que pulsamos en el boton de editar venta tenemos que limpiar el array
                 arrayProductoCantidadEditar = [];
 
                 // cargamos el cliente en el campo correspondiente
                 $('#ventaClienteEditar').val(venta.cliente.dni.concat(' - ').concat(venta.cliente.nombre, ' ', venta.cliente.apellido1, ' ', venta.cliente.apellido2));
-                // añadimos la librería select2 al desplegable del metodoPago
-                $('#selectMetodoPagoEditar').select2({
-                    dropdownParent: $('#modalEditarVenta'),
-                    width: '70%'
-                });
+
                 // cubrimos el select con los datos que recuperamos de la venta
                 $('#selectMetodoPagoEditar').val(venta.metodoPago).trigger('change');
                 // cargamos los productos en el select
-                cargarProductos();
+                cargarProductosEditarVenta(); // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
                 // limpiamos el cuerpo de la tabla
                 $('#tbodyProductosCarritoEditar').empty();
 
@@ -600,9 +593,63 @@ function modificarVenta() {
                 // llamada a la función para añadir productos al carrito de EditarVenta
                 anadirProductosCarritoEditar(contadorFilas);
 
-                // ahora recuperamos los datos que necesitamos enviar al back y enviamos por PUT con AJAX
+                let errores = false;
+                // Comprobamos si el carrito está vacío
+                if (arrayProductoCantidadEditar.length === 0) {
+                    toastr.warning('El carrito está vacío, añade algún producto');
+                    errores = true;
+                }
 
-             },
+                if (!errores) {
+                    //Evento del botón de Editar
+                    $("#btnEditar").on("click", function() {
+                        // ahora recuperamos los datos que necesitamos enviar al back y enviamos por PUT con AJAX
+                        let metodoPago =  $("#selectMetodoPagoEditar").val();
+                        // Construir la lista de productos para enviar al backend
+                        let productosVendidos = [];
+                        arrayProductoCantidadEditar.forEach(function(productoCantidadEditar) {
+                            productosVendidos.push({
+                                producto: { productoId: productoCantidadEditar.producto.productoId },
+                                udsVendidas: parseInt(productoCantidadEditar.cantidad)
+                            });
+                        });
+                        //console.log('idVenta: ' + ventaId + 'Los productos de Editar venta: ' + JSON.stringify(productosVendidos), 'metodo de pago: ' + metodoPago);
+
+                        $.ajax({
+                            url: "http://localhost:8001/ventas/" + ventaId,
+                            method: "PUT",
+                            dataType: "json",
+                            contentType: "application/json",
+                            data: JSON.stringify({
+                                ventaId: ventaId,
+                                productosVendidos: productosVendidos,
+                                metodoPago: metodoPago
+                            }),
+                            success: function (data) {
+                                // Mostrar mensaje de éxito con Toastr
+                                toastr.success("Venta editada con éxito");
+
+                                // Recargar la página después de 1 segundo
+                                setTimeout(function () {
+                                    location.reload();
+                                }, 1000);
+                            },
+                            error: function (xhr, status, error) {
+                                // Manejar errores de la solicitud HTTP
+                                console.error('Error al hacer la solicitud:', error);
+
+                                // Verificar si el error es debido a falta de stock
+                                if (xhr.status === 409) {
+                                    toastr.error("No hay suficiente stock para completar la venta");
+                                } else {
+                                    // Si el error no es de falta de stock, mostrar un mensaje de error genérico
+                                    toastr.error('Error al editar la venta: ' + error.message);
+                                }
+                            }
+                        });
+                    });
+                }
+            },
             error: function (xhr, status, error) {
                 console.error("Error al recuperar la venta: " + error);
                 let errorMessage = "Error al cargar los datos de la venta ";
@@ -669,7 +716,7 @@ function anadirProductosCarritoEditar(contadorFilasEditar){
                             "total": total
                         }
                     );
-                    console.log('array añadir: ' + JSON.stringify(arrayProductoCantidadEditar)); // para ver los datos del array
+                    //console.log('array añadir: ' + JSON.stringify(arrayProductoCantidadEditar)); // para ver los datos del array
 
                     // Creamos la fila HTML con los datos del producto
                     let fila =
@@ -690,6 +737,9 @@ function anadirProductosCarritoEditar(contadorFilasEditar){
 
                     // llamada al metodo para la suma total de la venta
                     precioTotalVenta(arrayProductoCantidadEditar);
+
+                    // refrescamos el select de los productos para mostrar los que no están en el carrito
+                    cargarProductosEditarVenta();
                 },
                 error: function (xhr, status, error) {
                     console.error("Error al recuperar el producto: " + error);
@@ -703,6 +753,52 @@ function anadirProductosCarritoEditar(contadorFilasEditar){
                     }
                 }
             });
+        }
+    });
+}
+
+// función para cargar los productos en el modal de editar venta, excluyendo los que ya están en el carrito
+function cargarProductosEditarVenta() {
+    // Crear un array para almacenar los IDs de los productos en el carrito
+    let productosEnCarritoIds = arrayProductoCantidadEditar.map(item => item.producto.productoId);
+
+    // Realizar la solicitud AJAX para recuperar todos los productos
+    $.ajax({
+        url: "http://localhost:8001/producto/deAlta",
+        method: "GET",
+        dataType: "json",
+        success: function (data) {
+            // Filtrar los productos para excluir aquellos que ya están en el carrito
+            let productosDisponibles = data.filter(function(producto) {
+                // Verificar si el producto actual ya está en el carrito
+                for (let item of arrayProductoCantidadEditar) {
+                    if (item.producto.productoId === producto.productoId) {
+                        return false; // Excluir el producto del array si ya está en el carrito
+                    }
+                }
+                return true; // Mantener el producto en el array si no está en el carrito
+            });
+
+            // Limpiar las opciones existentes en el selector de productos
+            $('#selectProductosEditar').empty();
+
+            // Añadir una opción para indicar al usuario que seleccione un producto
+            $('#selectProductosEditar').append(`<option selected disabled value="">Selecciona el producto</option>`);
+
+            // Agregar las opciones de productos disponibles al selector correspondiente
+            productosDisponibles.forEach(function (producto) {
+                $('#selectProductosEditar').append(`<option value="${producto.productoId}">${producto.nombre} (Stock: ${producto.stock})</option>`);
+            });
+
+            // Aplicar libreria 'Select2' al selector de productos en ModalEditarVenta
+            $('#selectProductosEditar').select2({
+                dropdownParent: $('#modalEditarVenta'),
+                width: '100%'
+            });
+        },
+        error: function (error) {
+            console.error("Error al cargar los productos:", error);
+            toastr.error("Error al cargar los datos de los productos en el desplegable");
         }
     });
 }

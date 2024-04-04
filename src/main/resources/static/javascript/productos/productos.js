@@ -33,7 +33,7 @@ function listarProductos() {
                 content += `
                 <tr>
                     <td>${producto.nombre}</td>
-                    <td>${producto.precio}</td>
+                    <td>${producto.precio.toFixed(2).replace('.',',')}</td>
                     <td>${producto.stock}</td>
                     <td>${producto.deAlta ? '<i class="bi bi-check-circle-fill text-success"></i>' : '<i class="bi bi-x-circle-fill text-danger"></i>'}</td>
                     <td>${producto.descripcion}</td>
